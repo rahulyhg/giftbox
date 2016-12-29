@@ -1,0 +1,19 @@
+{
+    "name": "keiko/td12",
+    "require": {
+        "slim/slim": "2.*",
+        "illuminate/database" : "5.0.*"
+    },
+    "authors": [
+        {
+            "name": "TB",
+            "email": "t.bourrely@openmailbox.org"
+        }
+    ],
+    "autoload":{
+        "psr-0":{
+            "src" : "giftbox"
+        },
+        "classmap": ["src/"]
+    }
+}
