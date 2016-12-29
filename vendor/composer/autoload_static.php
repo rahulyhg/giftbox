@@ -95,6 +95,7 @@ class ComposerStaticInit0e6f69efea77dce5e54e95c87314bb26
         'giftbox\\Factory\\ConnectionFactory' => __DIR__ . '/../..' . '/src/giftbox/ConnectionFactory.php',
         'giftbox\\models\\Categorie' => __DIR__ . '/../..' . '/src/giftbox/models/Categorie.php',
         'giftbox\\models\\Prestation' => __DIR__ . '/../..' . '/src/giftbox/models/Prestation.php',
+        'giftbox\\view\\CatView' => __DIR__ . '/../..' . '/src/giftbox/view/CatView.php',
         'giftbox\\view\\PrestaView' => __DIR__ . '/../..' . '/src/giftbox/view/PrestaView.php',
     );
 

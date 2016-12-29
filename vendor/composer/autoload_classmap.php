@@ -9,5 +9,6 @@ return array(
     'giftbox\\Factory\\ConnectionFactory' => $baseDir . '/src/giftbox/ConnectionFactory.php',
     'giftbox\\models\\Categorie' => $baseDir . '/src/giftbox/models/Categorie.php',
     'giftbox\\models\\Prestation' => $baseDir . '/src/giftbox/models/Prestation.php',
+    'giftbox\\view\\CatView' => $baseDir . '/src/giftbox/view/CatView.php',
     'giftbox\\view\\PrestaView' => $baseDir . '/src/giftbox/view/PrestaView.php',
 );
