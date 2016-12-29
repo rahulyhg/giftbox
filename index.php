@@ -30,18 +30,21 @@ $app->get('/prestations/', function(){
 $app->get('/prestations/:id', function($id){
     $prestation = \giftbox\models\Prestation::find($id);
     $vue = new \giftbox\view\PrestaView([$prestation]);
-    $vue->render(2);
+    $html = new \giftbox\view\htmlView($vue->render(2));
+    $html->render();
 });
 
 $app->get('/categories/', function(){
     $categories = \giftbox\models\Categorie::all();
     $vue = new \giftbox\view\CatView($categories);
-    $vue->render(1);
+    $html = new \giftbox\view\htmlView($vue->render(1));
+    $html->render();
 });
 $app->get('/categories/:categorie', function($categorie){
     $cat = \giftbox\models\Categorie::find($categorie);
     $vue = new \giftbox\view\CatView([$cat]);
-    $vue->render(2);
+    $html = new \giftbox\view\htmlView($vue->render(2));
+    $html->render();
 });
 
 

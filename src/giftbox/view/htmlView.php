@@ -18,8 +18,8 @@ class htmlView
     }
     public function render(){
         ob_start();
-        include 'htmlCode.php';
         $content = $this->contenu;
+        include 'htmlCode.php';
         ob_end_flush();
     }
 }

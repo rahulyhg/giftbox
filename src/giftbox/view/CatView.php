@@ -9,6 +9,8 @@
 namespace giftbox\view;
 
 
+use giftbox\models\Prestation;
+
 class CatView
 {
     private $data;
@@ -25,9 +27,10 @@ class CatView
         return $contenu;
     }
     private function categoriePrest(){
-        $contenu = "";
+        $contenu = "ok";
         $categorie = $this->data[0];
-
+        $prestations = new PrestaView($categorie->prestations()->get());
+        $contenu = $prestations->render(1);
         return $contenu;
     }
 
