@@ -31,7 +31,6 @@ class PrestaView
         return $contenu;
     }
     public function render($aff){
-        ob_start();
 
         switch ($aff){
             case 1:
@@ -45,8 +44,7 @@ class PrestaView
                 break;
         }
 
-        include 'htmlCode.php';
-        ob_end_flush();
+        return $content;
     }
 
 }

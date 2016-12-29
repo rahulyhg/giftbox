@@ -23,7 +23,9 @@ $app->get('/',function(){
 $app->get('/prestations/', function(){
     $liste = \giftbox\models\Prestation::all();
     $vue = new \giftbox\view\PrestaView($liste->toArray());
-    $vue->render(1);
+    $html = new \giftbox\view\htmlView($vue->render(1));
+    $html->render();
+
 });
 $app->get('/prestations/:id', function($id){
     $prestation = \giftbox\models\Prestation::find($id);
