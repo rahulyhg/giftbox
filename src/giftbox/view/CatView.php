@@ -13,23 +13,29 @@ use giftbox\models\Prestation;
 
 class CatView
 {
-    private $data;
-    public function __construct($array)
+    private $data, $order;
+    public function __construct($array, $ord = null)
     {
         $this->data = $array;
+        $this->order = $ord;
     }
 
     private function listeCategories(){
         $contenu = "";
         foreach ($this->data as $d){
-            $contenu = $contenu."<h2>".$d->nom."</h2><a href=\"/projet_giftbox/categories/${d['id']}\">voir les prestations</a>";
+            $contenu = $contenu."<h2>".$d->nom."</h2><a href=\"/projet_giftbox/categories/${d['id']}/asc\">voir les prestations</a>";
         }
         return $contenu;
     }
     private function categoriePrest(){
         $contenu = "ok";
         $categorie = $this->data[0];
-        $prestations = new PrestaView($categorie->prestations()->get());
+        if($this->order == "desc"){
+            $prestations = new PrestaView($categorie->prestations()->get()->sortByDesc('prix'));
+        }else{
+            $prestations = new PrestaView($categorie->prestations()->get()->sortBy('prix'));
+        }
+
         $contenu = $prestations->render(1);
         return $contenu;
     }

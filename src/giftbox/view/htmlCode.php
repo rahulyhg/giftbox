@@ -12,12 +12,13 @@ echo "<!DOCTYPE html>
     <head>
         <title>Accueil</title>
         <meta charset='UTF-8'>
+        <link rel='stylesheet' type='text/css' href='{$directory}web/css/style.css'>
     </head>
     <body>
         <nav>
             <ul>
                 <li><a href=$directory>home</a></li>
-                <li><a href=\"{$directory}prestations/\">prestations</a></li>
+                <li><a href=\"{$directory}prestations/all/asc\">prestations</a></li>
                 <li><a href=\"{$directory}categories/\">categories</a></li>
             </ul>
         </nav>

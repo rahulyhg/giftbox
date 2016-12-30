@@ -20,13 +20,17 @@ $app->get('/',function(){
     ob_end_flush();
 });
 
-$app->get('/prestations/', function(){
-    $liste = \giftbox\models\Prestation::all();
+$app->get('/prestations/all/:order', function($order){
+    if ($order == "desc"){
+        $liste = \giftbox\models\Prestation::all()->sortByDesc('prix');
+    }else{
+        $liste = \giftbox\models\Prestation::all()->sortBy('prix');
+    }
     $vue = new \giftbox\view\PrestaView($liste->toArray());
     $html = new \giftbox\view\htmlView($vue->render(1));
     $html->render();
-
 });
+
 $app->get('/prestations/:id', function($id){
     $prestation = \giftbox\models\Prestation::find($id);
     $vue = new \giftbox\view\PrestaView([$prestation]);
@@ -40,9 +44,9 @@ $app->get('/categories/', function(){
     $html = new \giftbox\view\htmlView($vue->render(1));
     $html->render();
 });
-$app->get('/categories/:categorie', function($categorie){
+$app->get('/categories/:categorie/:order', function($categorie, $order){
     $cat = \giftbox\models\Categorie::find($categorie);
-    $vue = new \giftbox\view\CatView([$cat]);
+    $vue = new \giftbox\view\CatView([$cat], $order);
     $html = new \giftbox\view\htmlView($vue->render(2));
     $html->render();
 });
