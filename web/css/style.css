@@ -1,3 +1,40 @@
 .prestaImg{
     width:80px;
 }
+
+.alert {
+    width: 100%;
+    margin: 5px auto;
+    padding: 10px;
+    background-color: #b8b8b8;
+    color: #fff;
+    text-align: center;
+    text-decoration: none;
+    text-shadow: none;
+}
+
+.alert-info {
+    background-color: #708dd1;
+}
+
+.alert-success {
+    background-color: #e0aa43;
+}
+
+.alert-error {
+    background-color: #cf403f;
+}
+
+table, td, th {
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+th, td {
+    padding: 15px;
+}
