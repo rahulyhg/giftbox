@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <htmt>
     <head>
-        <title>Accueil</title>
+        <title>Accueil<?php echo isset($title) ? ' - ' . $title : ''; ?></title>
         <meta charset='UTF-8'>
         <link rel='stylesheet' type='text/css' href='<?php echo BASE_URL; ?>/web/css/style.css'>
     </head>
@@ -20,6 +20,7 @@
     </nav>
     <content>
         <p>
+
             <?php if (isset($_SESSION['flash']['message'])): ?>
                 <div class="alert alert-<?php echo $_SESSION['flash']['type']; ?>"><?php echo $_SESSION['flash']['message']; ?></div>
             <?php $_SESSION['flash'] = array(); endif; ?>

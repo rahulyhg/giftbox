@@ -28,6 +28,7 @@ class CategoriesController extends BaseController
         }
         $url = BASE_URL . DIRECTORY_SEPARATOR . 'categories' . DIRECTORY_SEPARATOR . $params['id'];
         $this->set('url', $url);
+        $this->set('nom', $nom = \giftbox\models\Categorie::find($prestations[0]['cat_id'])->nom);
         $this->set('prestations', $prestations);
     }
 

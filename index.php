@@ -33,7 +33,7 @@ $app->get('/prestations/all/:order', function($order){
     $html = new \giftbox\view\htmlView($vue->render(1));
     $html->render();*/
 
-    new \giftbox\controller\PrestationsController('index', $order);
+    $controller = new \giftbox\controller\PrestationsController('index', $order);
 });
 
 $app->get('/prestations/:id', function($id){
@@ -69,6 +69,14 @@ $app->get('/prestation/add/:id', function($id) {
 
 $app->get('/panier', function() {
     $controller = new \giftbox\controller\PanierController('index');
+});
+
+$app->get('/panier/delete/:id', function($id) {
+    $controller = new \giftbox\controller\PanierController('delete', $id);
+});
+
+$app->get('/panier/save', function() {
+    $controller = new \giftbox\controller\PanierController('save');
 });
 
 $app->run();

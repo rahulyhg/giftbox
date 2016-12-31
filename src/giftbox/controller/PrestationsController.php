@@ -37,18 +37,23 @@ class PrestationsController extends BaseController
                     'qua' => 1,
                     'article' => array()
                 );
-                $_SESSION['panier']['article'][] = array(
+                $_SESSION['panier']['article'][$prestation->nom] = array(
                     'id' => $prestation->id,
-                    'nom' => $prestation->nom,
+                    'qua' => 1,
                     'prix' => $prestation->prix
                 );
             } else {
                 $_SESSION['panier']['qua'] = ($_SESSION['panier']['qua'] + 1);
-                $_SESSION['panier']['article'][] = array(
-                    'id' => $prestation->id,
-                    'nom' => $prestation->nom,
-                    'prix' => $prestation->prix
-                );
+                if (isset($_SESSION['panier']['article'][$prestation->nom])) {
+                    $_SESSION['panier']['article'][$prestation->nom]['qua'] = ($_SESSION['panier']['article'][$prestation->nom]['qua'] + 1);
+                    $_SESSION['panier']['article'][$prestation->nom]['prix'] = ($_SESSION['panier']['article'][$prestation->nom]['prix'] + $prestation->prix);
+                } else {
+                    $_SESSION['panier']['article'][$prestation->nom] = array(
+                        'id' => $prestation->id,
+                        'qua' => 1,
+                        'prix' => $prestation->prix
+                    );
+                }
             }
             $_SESSION['flash'] = array(
                 'message' => 'Préstation ajoutée au panier',

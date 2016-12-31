@@ -1,3 +1,4 @@
+<?php $title = 'Préstations'; ?>
 <?php foreach ($prestations as $prestation => $p):
     $nom = \giftbox\models\Categorie::find($p->cat_id)->nom;
 ?>

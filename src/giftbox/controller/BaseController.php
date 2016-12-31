@@ -9,8 +9,7 @@ class BaseController {
 	public $vars = array();
     protected $name;
 
-    function __construct($action, $params = null)
-    {
+    public function __construct($action, $params = null) {
         $this->$action($params);
         $this->render($action);
     }
