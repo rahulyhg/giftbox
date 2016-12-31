@@ -29,8 +29,12 @@ class PanierController extends BaseController
         $prestation = Prestation::where('id', '=', $id)->first();
         if (isset($_SESSION['panier']['article'][$prestation->nom])) {
             $_SESSION['panier']['qua'] = ($_SESSION['panier']['qua'] - 1);
-            $_SESSION['panier']['article'][$prestation->nom]['qua'] = ($_SESSION['panier']['article'][$prestation->nom]['qua'] - 1);
-            $_SESSION['panier']['article'][$prestation->nom]['prix'] = ($_SESSION['panier']['article'][$prestation->nom]['prix'] - $prestation->prix);
+            if ($_SESSION['panier']['article'][$prestation->nom]['qua'] == 1) {
+                unset($_SESSION['panier']['article'][$prestation->nom]);
+            } else {
+                $_SESSION['panier']['article'][$prestation->nom]['qua'] = ($_SESSION['panier']['article'][$prestation->nom]['qua'] - 1);
+                $_SESSION['panier']['article'][$prestation->nom]['prix'] = ($_SESSION['panier']['article'][$prestation->nom]['prix'] - $prestation->prix);
+            }
             $_SESSION['flash'] = array(
                 'message' => 'Préstation supprimée du panier',
                 'type' => 'success'
