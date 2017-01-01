@@ -7,6 +7,10 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'giftbox\\Factory\\ConnectionFactory' => $baseDir . '/src/giftbox/ConnectionFactory.php',
+    'giftbox\\controller\\BaseController' => $baseDir . '/src/giftbox/controller/BaseController.php',
+    'giftbox\\controller\\CategoriesController' => $baseDir . '/src/giftbox/controller/CategoriesController.php',
+    'giftbox\\controller\\PanierController' => $baseDir . '/src/giftbox/controller/PanierController.php',
+    'giftbox\\controller\\PrestationsController' => $baseDir . '/src/giftbox/controller/PrestationsController.php',
     'giftbox\\models\\Categorie' => $baseDir . '/src/giftbox/models/Categorie.php',
     'giftbox\\models\\Prestation' => $baseDir . '/src/giftbox/models/Prestation.php',
     'giftbox\\view\\CatView' => $baseDir . '/src/giftbox/view/CatView.php',
