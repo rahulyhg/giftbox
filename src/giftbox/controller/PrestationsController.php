@@ -64,7 +64,11 @@ class PrestationsController extends BaseController
             if (strstr($_SERVER['HTTP_REFERER'], 'panier')) {
                 $this->redirect('/panier');
             } else {
-                $this->redirect('/prestations/all/asc');
+                //$this->redirect('/prestations/all/asc');
+
+                $url = str_replace("http://localhost/projet_giftbox", "", $_SERVER['HTTP_REFERER']);
+
+                $this->redirect($url);
             }
         } else {
             $this->redirect(BASE_URL . '/');
