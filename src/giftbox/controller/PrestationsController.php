@@ -22,6 +22,8 @@ class PrestationsController extends BaseController
             $prestations = \giftbox\models\Prestation::all()->sortByDesc('prix');
         }
         $this->set('prestations', $prestations);
+        $url = BASE_URL . DIRECTORY_SEPARATOR . 'prestations' . DIRECTORY_SEPARATOR . 'all';
+        $this->set('url',$url);
     }
 
     public function view($id) {

@@ -36,7 +36,7 @@ class PanierController extends BaseController
                 $_SESSION['panier']['article'][$prestation->nom]['prix'] = ($_SESSION['panier']['article'][$prestation->nom]['prix'] - $prestation->prix);
             }
             $_SESSION['flash'] = array(
-                'message' => 'Préstation supprimée du panier',
+                'message' => 'Prestation supprimée du panier',
                 'type' => 'success'
             );
             $this->redirect('/panier');
