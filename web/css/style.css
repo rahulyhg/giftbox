@@ -38,3 +38,8 @@ table {
 th, td {
     padding: 15px;
 }
+
+.cart {
+    vertical-align: middle;
+    margin: -5px 5px 0 0;
+}

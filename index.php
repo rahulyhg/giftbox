@@ -7,7 +7,6 @@
  */
 
 session_start();
-define('BASE_URL', dirname($_SERVER['SCRIPT_NAME']));
 
 require 'vendor/autoload.php';
 
@@ -56,15 +55,21 @@ $app->get('/categories/:categorie/:order', function($categorie, $order){
 });
 
 $app->get('/prestation/add/:id', function($id) {
-
+    $vue = new \giftbox\view\PanierView([$id]);
+    $html = new \giftbox\view\htmlView($vue->render('add'));
+    $html->render();
 });
 
 $app->get('/panier', function() {
-
+    $vue = new \giftbox\view\PanierView();
+    $html = new \giftbox\view\htmlView($vue->render('panier'));
+    $html->render();
 });
 
-$app->get('/panier/delete/:id', function($id) {
-
+$app->get('/prestation/delete/:id', function($id) {
+    $vue = new \giftbox\view\PanierView([$id]);
+    $html = new \giftbox\view\htmlView($vue->render('remove'));
+    $html->render();
 });
 
 $app->get('/panier/save', function() {
