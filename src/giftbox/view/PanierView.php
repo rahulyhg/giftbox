@@ -41,8 +41,8 @@ class PanierView
                 $html .= '<td>' . $a['prix'] . ' &euro;</td>';
                 $html .= '<td>';
                 $url = dirname($_SERVER['REQUEST_URI']);
-                $html .= '<a href="' . $url . '/prestation/add/' . $a['id'] . '"><img src="' . $url . '/web/img/add.png" width="32" alt="Ajouter"></a>';
-                $html .= '<a href="' . $url . '/prestation/delete/' . $a['id'] . '"><img src="' . $url . '/web/img/trash.png" width="32" alt="Supprimer"></a>';
+                $html .= '<a href="/projet_giftbox/prestation/add/' . $a['id'] . '"><img src="/projet_giftbox/eb/img/add.png" width="32" alt="Ajouter"></a>';
+                $html .= '<a href="/projet_giftbox/prestation/delete/' . $a['id'] . '"><img src="/projet_giftbox/web/img/trash.png" width="32" alt="Supprimer"></a>';
                 $html .= '</td>';
                 $html .= '</tr>';
                 $total = $total + $a['prix'];
