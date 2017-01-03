@@ -24,42 +24,18 @@ $app->get('/',function(){
 });
 
 $app->get('/prestations/all/:order', function($order){
-    /*if ($order == "desc"){
-        $liste = \giftbox\models\Prestation::all()->sortByDesc('prix');
-    }else{
-        $liste = \giftbox\models\Prestation::all()->sortBy('prix');
-    }
-    $vue = new \giftbox\view\PrestaView($liste->toArray());
-    $html = new \giftbox\view\htmlView($vue->render(1));
-    $html->render();*/
-
     $controller = new \giftbox\controller\PrestationsController('index', $order);
 });
 
 $app->get('/prestations/:id', function($id){
-   /*$prestation = \giftbox\models\Prestation::find($id);
-    $vue = new \giftbox\view\PrestaView([$prestation]);
-    $html = new \giftbox\view\htmlView($vue->render(2));
-    $html->render();*/
-
     $controller = new \giftbox\controller\PrestationsController('view', $id);
 });
 
 $app->get('/categories/', function(){
-    /*$categories = \giftbox\models\Categorie::all();
-    $vue = new \giftbox\view\CatView($categories);
-    $html = new \giftbox\view\htmlView($vue->render(1));
-    $html->render();*/
-
     $controller = new \giftbox\controller\CategoriesController('index');
 });
 
 $app->get('/categories/:categorie/:order', function($categorie, $order){
-    /*$cat = \giftbox\models\Categorie::find($categorie);
-    $vue = new \giftbox\view\CatView([$cat], $order);
-    $html = new \giftbox\view\htmlView($vue->render(2));
-    $html->render();*/
-
     $controller = new \giftbox\controller\CategoriesController('view', ['id' => $categorie, 'order' => $order]);
 });
 

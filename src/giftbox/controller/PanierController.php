@@ -21,6 +21,10 @@ class PanierController extends BaseController
         if (isset($_SESSION['panier'])) {
             $this->set('panier', $_SESSION['panier']);
         } else {
+            $_SESSION['flash'] = array(
+                'message' => 'Panier vide',
+                'type' => 'info'
+            );
             $this->set('panier', null);
         }
     }
