@@ -96,4 +96,11 @@ $app->post('/panier/validation', function() {
 	$html->render();
 })->name('validation');
 
+$app->get('/panier/save', function() {
+	$app = \Slim\Slim::getInstance();
+	$vue = new \giftbox\view\PanierView($app);
+	$html = new \giftbox\view\htmlView($vue->render('save'));
+	$html->render();
+})->name('save');
+
 $app->run();

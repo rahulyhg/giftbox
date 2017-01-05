@@ -93,11 +93,8 @@ class ComposerStaticInit0e6f69efea77dce5e54e95c87314bb26
 
     public static $classMap = array (
         'giftbox\\Factory\\ConnectionFactory' => __DIR__ . '/../..' . '/src/giftbox/ConnectionFactory.php',
-        'giftbox\\controller\\BaseController' => __DIR__ . '/../..' . '/src/giftbox/controller/BaseController.php',
-        'giftbox\\controller\\CategoriesController' => __DIR__ . '/../..' . '/src/giftbox/controller/CategoriesController.php',
-        'giftbox\\controller\\PanierController' => __DIR__ . '/../..' . '/src/giftbox/controller/PanierController.php',
-        'giftbox\\controller\\PrestationsController' => __DIR__ . '/../..' . '/src/giftbox/controller/PrestationsController.php',
         'giftbox\\models\\Categorie' => __DIR__ . '/../..' . '/src/giftbox/models/Categorie.php',
+        'giftbox\\models\\Coffret' => __DIR__ . '/../..' . '/src/giftbox/models/Coffret.php',
         'giftbox\\models\\Prestation' => __DIR__ . '/../..' . '/src/giftbox/models/Prestation.php',
         'giftbox\\view\\CatView' => __DIR__ . '/../..' . '/src/giftbox/view/CatView.php',
         'giftbox\\view\\PanierView' => __DIR__ . '/../..' . '/src/giftbox/view/PanierView.php',
