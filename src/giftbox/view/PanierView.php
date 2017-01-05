@@ -15,8 +15,11 @@ class PanierView
 {
 
     private $data;
-    public function __construct($array = null)
+    private $app;
+
+    public function __construct($app = null, $array = null)
     {
+        $this->app = $app;
         $this->data = $array;
     }
 
@@ -32,17 +35,17 @@ class PanierView
         $html .= '<th>Actions</th>';
         $html .= '</tr>';
         $html .= '</thead>';
-        if (isset($_SESSION['panier'])) {
+        if (isset($_SESSION['panier']) && $_SESSION['panier']['qua'] > 0) {
             $html .= '<tbody>';
+            $uri = $this->app->request->getRootUri();
             foreach ($_SESSION['panier']['article'] as $article => $a) {
                 $html .= '<tr>';
-                $html .= '<td>' . $article . '</td>';
+                $html .= '<td><a href="' . $this->app->urlFor('prestation', ['id' => $a['id']]) . '">' . $article . '</a></td>';
                 $html .= '<td>' . $a['qua'] . '</td>';
                 $html .= '<td>' . $a['prix'] . ' &euro;</td>';
                 $html .= '<td>';
-                $url = dirname($_SERVER['REQUEST_URI']);
-                $html .= '<a href="/projet_giftbox/prestation/add/' . $a['id'] . '"><img src="/projet_giftbox/web/img/add.png" width="32" alt="Ajouter"></a>';
-                $html .= '<a href="/projet_giftbox/prestation/delete/' . $a['id'] . '"><img src="/projet_giftbox/web/img/trash.png" width="32" alt="Supprimer"></a>';
+                $html .= '<a href="' . $this->app->urlFor('ajouter', ['id' => $a['id']]) . '"><img src="' . $uri . '/web/img/add.png" width="32" alt="Ajouter"></a>';
+                $html .= '<a href="' . $this->app->urlFor('supprimer', ['id' => $a['id']]) . '"><img src="' . $uri . '/web/img/trash.png" width="32" alt="Supprimer"></a>';
                 $html .= '</td>';
                 $html .= '</tr>';
                 $total = $total + $a['prix'];
@@ -55,6 +58,7 @@ class PanierView
         $html .= '<tr><td colspan="3" style="text-align: right">Total:</td><td>' . $total . ' &euro;</td></tr>';
         $html .= '</tfoot>';
         $html .= '<table>';
+        $html .= '<p><a href="' . $this->app->urlFor('informations') . '">Sauvegarder le coffret</a></p>';
         return $html;
     }
 
@@ -106,9 +110,53 @@ class PanierView
             }
             $html .= '<div class="alert alert-success">Prestation supprimée du panier</div>';
         } else {
-            $html .= '<div class="alert alert-danger">Whoops ! Des erreurs ont été rencontrées</div>';
+            $html .= '<div class="alert alert-error">Whoops ! Des erreurs ont été rencontrées</div>';
         }
         return $html;
+    }
+
+    private function informations() {
+        $formulaire = '<form id="formulaire" action="' . $this->app->urlFor('validation') . '" method="post">';
+        $formulaire .= '<label for="nom">Nom : </label>';
+        $formulaire .= '<input type="text" name="nom"id="nom" placeholder="Nom">';
+        $formulaire .= '<label for="prenom">Prénom : </label>';
+        $formulaire .= '<input type="text" name="prenom" id="prenom" placeholder="Prénom">';
+        $formulaire .= '<label for="email">Email : </label>';
+        $formulaire .= '<input type="email" name="email" id="email" placeholder="Email">';
+        $formulaire .= '<label for="message">Message : </label>';
+        $formulaire .= '<textarea name="message" id="message" cols="50" rows="5"></textarea>';
+        $formulaire .= '<label for="password">Mot de passe : </label>';
+        $formulaire .= '<input type="password" name="password" id="password" placeholder="Mot de passe">';
+        $formulaire .= '<label for="password_repeat">Mot de passe (Vérif.) : </label>';
+        $formulaire .= '<input type="password" name="password_repeat" id="password_repeat" placeholder="Mot de passe (Vérif.)">';
+        $formulaire .= '<label for="paiement">Mode de paiement : </label>';
+        $formulaire .= '<select name="paiement">';
+        $formulaire .= '<option value="classique">Classique</value>';
+        $formulaire .= '<option value="cagnotte">Cagnotte</value>';
+        $formulaire .= '</select>';
+        $formulaire .= '<button>Valider</button>';
+        $formulaire .= '</form>';
+        return $formulaire;
+    }
+
+    private function validation() {
+        $errors = array();
+        $contenu = '';
+        
+        $data = $this->app->request->post();
+
+        if (!empty($errors)) {
+            $contenu .= '<ul class="alert alert-error">';
+            $contenu .= 'Whoops, des erreurs ont été rencontrées :';
+            foreach ($errors as $error) {
+                $contenu .= '<li>' . $error . '</li>';
+            }
+            $contenu .= '</ul>';
+        } else {
+            // TODO : Sauvegarder en BDD
+            $contenu .= '<div class="alert alert-success">Coffret sauvegardé avec succès !</div>';
+        }
+        return $contenu;
     }
 
     public function render($v) {
@@ -120,12 +168,18 @@ class PanierView
 
             case 'add':
                 $content = $this->add();
-                $content .= $this->panier();
                 break;
 
             case 'remove':
                 $content = $this->remove();
-                $content .= $this->panier();
+                break;
+
+            case 'infos':
+                $content = $this->informations();
+                break;
+
+            case 'validation':
+                $content = $this->validation();
                 break;
         }
         return $content;

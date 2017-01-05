@@ -16,64 +16,84 @@ require 'vendor/autoload.php';
 $app = new \Slim\Slim();
 
 $app->get('/',function(){
-    ob_start();
-    $content = "<h1>home</h1>";
-    include "src/giftbox/view/htmlCode.php";
-    ob_end_flush();
-});
+	ob_start();
+	$content = "<h1>home</h1>";
+	include "src/giftbox/view/htmlCode.php";
+	ob_end_flush();
+})->name('index');
 
 $app->get('/prestations/all/:order', function($order){
-    if ($order == "desc"){
-        $liste = \giftbox\models\Prestation::all()->sortByDesc('prix');
-    }else{
-        $liste = \giftbox\models\Prestation::all()->sortBy('prix');
-    }
-    $vue = new \giftbox\view\PrestaView($liste->toArray());
-    $html = new \giftbox\view\htmlView($vue->render(1));
-    $html->render();
-});
+	$app = \Slim\Slim::getInstance();
+	if ($order == "desc"){
+		$liste = \giftbox\models\Prestation::all()->sortByDesc('prix');
+	}else{
+		$liste = \giftbox\models\Prestation::all()->sortBy('prix');
+	}
+	$vue = new \giftbox\view\PrestaView($app, $liste->toArray());
+	$html = new \giftbox\view\htmlView($vue->render(1));
+	$html->render();
+})->name('prestations');
 
 $app->get('/prestations/:id', function($id){
-   $prestation = \giftbox\models\Prestation::find($id);
-    $vue = new \giftbox\view\PrestaView([$prestation]);
-    $html = new \giftbox\view\htmlView($vue->render(2));
-    $html->render();
-});
+	$app = \Slim\Slim::getInstance();
+	$prestation = \giftbox\models\Prestation::find($id);
+	$vue = new \giftbox\view\PrestaView($app, [$prestation]);
+	$html = new \giftbox\view\htmlView($vue->render(2));
+	$html->render();
+})->name('prestation');
 
-$app->get('/categories/', function(){
-    $categories = \giftbox\models\Categorie::all();
-    $vue = new \giftbox\view\CatView($categories);
-    $html = new \giftbox\view\htmlView($vue->render(1));
-    $html->render();
-});
+$app->get('/categories', function(){
+	$app = \Slim\Slim::getInstance();
+	$categories = \giftbox\models\Categorie::all();
+	$vue = new \giftbox\view\CatView($app, $categories);
+	$html = new \giftbox\view\htmlView($vue->render(1));
+	$html->render();
+})->name('categories');
 
 $app->get('/categories/:categorie/:order', function($categorie, $order){
-    $cat = \giftbox\models\Categorie::find($categorie);
-    $vue = new \giftbox\view\CatView([$cat], $order);
-    $html = new \giftbox\view\htmlView($vue->render(2));
-    $html->render();
-});
+	$app = \Slim\Slim::getInstance();
+	$cat = \giftbox\models\Categorie::find($categorie);
+	$vue = new \giftbox\view\CatView($app, [$cat], $order);
+	$html = new \giftbox\view\htmlView($vue->render(2));
+	$html->render();
+})->name('categories.order');
 
 $app->get('/prestation/add/:id', function($id) {
-    $vue = new \giftbox\view\PanierView([$id]);
-    $html = new \giftbox\view\htmlView($vue->render('add'));
-    $html->render();
-});
-
-$app->get('/panier', function() {
-    $vue = new \giftbox\view\PanierView();
-    $html = new \giftbox\view\htmlView($vue->render('panier'));
-    $html->render();
-});
+	$app = \Slim\Slim::getInstance();
+	$vue = new \giftbox\view\PanierView($app, [$id]);
+	$html = new \giftbox\view\htmlView($vue->render('add'));
+	$html->render();
+	$app->response->redirect($app->urlFor('panier'), 200);
+})->name('ajouter');
 
 $app->get('/prestation/delete/:id', function($id) {
-    $vue = new \giftbox\view\PanierView([$id]);
-    $html = new \giftbox\view\htmlView($vue->render('remove'));
-    $html->render();
-});
+	$app = \Slim\Slim::getInstance();
+	$vue = new \giftbox\view\PanierView($app, [$id]);
+	$html = new \giftbox\view\htmlView($vue->render('remove'));
+	$html->render();
+	$app->response->redirect($app->urlFor('panier'), 200);
+})->name('supprimer');
 
-$app->get('/panier/save', function() {
+$app->get('/panier', function() {
+	$app = \Slim\Slim::getInstance();
+	$vue = new \giftbox\view\PanierView($app);
+	$html = new \giftbox\view\htmlView($vue->render('panier'));
+	$html->render();
+})->name('panier');
 
-});
+
+$app->get('/panier/informations', function() {
+	$app = \Slim\Slim::getInstance();
+	$vue = new \giftbox\view\PanierView($app);
+	$html = new \giftbox\view\htmlView($vue->render('infos'));
+	$html->render();
+})->name('informations');
+
+$app->post('/panier/validation', function() {
+	$app = \Slim\Slim::getInstance();
+	$vue = new \giftbox\view\PanierView($app);
+	$html = new \giftbox\view\htmlView($vue->render('validation'));
+	$html->render();
+})->name('validation');
 
 $app->run();

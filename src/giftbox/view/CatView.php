@@ -8,8 +8,11 @@ use giftbox\models\Prestation;
 class CatView
 {
     private $data, $order;
-    public function __construct($array, $ord = null)
+    private $app;
+
+    public function __construct($app = null, $array, $ord = null)
     {
+        $this->app = $app;
         $this->data = $array;
         $this->order = $ord;
     }
@@ -18,16 +21,16 @@ class CatView
         $contenu = "";
         foreach ($this->data as $d){
             $contenu .= '<h2>' . $d->nom . '</h2>';
-            $contenu .= '<a href="/projet_giftbox/categories/' . $d['id'] . '/asc">voir les prestations</a>';
+            $contenu .= '<a href="' . $this->app->urlFor('categories.order', ['categorie' => $d->id, 'order' => 'asc']) . '">Voir les prestations</a>';
         }
         return $contenu;
     }
     private function categoriePrest(){
         $categorie = $this->data[0];
         if ($this->order == "desc") {
-            $prestations = new PrestaView($categorie->prestations()->get()->sortByDesc('prix'));
+            $prestations = new PrestaView($this->app, $categorie->prestations()->get()->sortByDesc('prix'));
         } else {
-            $prestations = new PrestaView($categorie->prestations()->get()->sortBy('prix'));
+            $prestations = new PrestaView($this->app, $categorie->prestations()->get()->sortBy('prix'));
         }
         $contenu = $prestations->render(1);
         return $contenu;

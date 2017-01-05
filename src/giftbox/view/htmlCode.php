@@ -6,7 +6,7 @@
  * Date: 29/12/16
  * Time: 10:49
  */
-$directory = "/projet_giftbox/";
+$directory = '/projet_giftbox/';
 echo '<!DOCTYPE html>
  <html>
     <head>
