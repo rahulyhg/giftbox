@@ -20,6 +20,7 @@ class PrestaView
     {
         $this->app = $app;
         $this->data = $array;
+
     }
 
     private function listePrestations(){

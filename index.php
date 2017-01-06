@@ -5,7 +5,6 @@
  * Date: 12/12/16
  * Time: 16:34
  */
-
 session_start();
 
 require 'vendor/autoload.php';
