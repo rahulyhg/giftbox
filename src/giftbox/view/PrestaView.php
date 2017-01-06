@@ -30,7 +30,7 @@ class PrestaView
             $nom = Categorie::find($d['cat_id'])->nom;
             $contenu .= '<h2>Prestation : ' . $d['nom'] . '</h2>';
             $contenu .= '<p><img class="prestaImg" src="' . $uri . '/web/img/' . $d['img'] . '"></p>';
-            $contenu .= '<h3>Categorie : <a href="/projet_giftbox/categories/' . $d['cat_id'] . '/asc">' . $nom . '</a></h3>';
+            $contenu .= '<h3>Categorie : <a href="' . $this->app->urlFor('categories.order', ['categorie'=>$d['cat_id'],'order' => 'asc']) . '">' . $nom . '</a></h3>';
             $contenu .= '<p>' . $d['descr'] . '</p>';
             $contenu .= '<p>Prix : ' . $d['prix'] . '</p>';
             $contenu .= '<a href="' . $this->app->urlFor('ajouter', ['id' => $d['id']]) . '"><img src="' . $uri . '/web/img/add.png" width="32" alt="Ajouter"></a>';
