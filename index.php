@@ -111,4 +111,18 @@ $app->get('/panier/save', function() {
 	$html->render();
 })->name('save');
 
+$app->get('/coffret/edit/:url', function($url){
+    $app = \Slim\Slim::getInstance();
+    $coffret = \giftbox\models\Coffret::where('urlGestion', '=', $url)->first();
+    $vue = new \giftbox\view\CoffretView($app, [$coffret]);
+    $html = new giftbox\view\htmlView($vue->render('gestion_coffret'));
+    $html->render();
+})->name('coffret_ges');
+$app->get('/coffret/:url', function($url){
+    $app = \Slim\Slim::getInstance();
+    $coffret = \giftbox\models\Coffret::where('url', '=', $url)->first();
+    $vue = new \giftbox\view\CoffretView($app, [$coffret]);
+    $html = new giftbox\view\htmlView($vue->render('coffret'));
+    $html->render();
+})->name('coffret');
 $app->run();
