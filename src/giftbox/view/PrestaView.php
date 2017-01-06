@@ -28,23 +28,25 @@ class PrestaView
         $contenu = '<a href="' . $this->app->urlFor('prestations', ['order' => 'asc']) . '">croissant</a>&nbsp;&nbsp;';
         $contenu .= '<a href="' . $this->app->urlFor('prestations', ['order' => 'desc']) . '">decroissant</a>';
         foreach ($this->data as $d){
-            $nom = Categorie::find($d['cat_id'])->nom;
-            $contenu .= '<h2>Prestation : ' . $d['nom'] . '</h2>';
-            $contenu .= '<p><img class="prestaImg" src="' . $uri . '/web/img/' . $d['img'] . '"></p>';
-            $contenu .= '<h3>Categorie : <a href="' . $this->app->urlFor('categories.order', ['categorie'=>$d['cat_id'],'order' => 'asc']) . '">' . $nom . '</a></h3>';
-            $contenu .= '<p>' . $d['descr'] . '</p>';
-            $contenu .= '<p>Prix : ' . $d['prix'] . '</p>';
-            $contenu .= '<a href="' . $this->app->urlFor('ajouter', ['id' => $d['id']]) . '"><img src="' . $uri . '/web/img/add.png" width="32" alt="Ajouter"></a>';
-            $contenu .= '<p><a href="' . $this->app->urlFor('prestation', ['id' => $d['id']]) . '">Voir plus &rarr;</a></p>';
+            $categorie = $d->categorie()->first()->nom;
+            $contenu .= '<h2>Prestation : ' . $d->nom . '</h2>';
+            $contenu .= '<p><img class="prestaImg" src="' . $uri . '/web/img/' . $d->img . '"></p>';
+            $contenu .= '<h3>Categorie : <a href="' . $this->app->urlFor('categories.order', ['categorie'=>$d['cat_id'],'order' => 'asc']) . '">' . $categorie . '</a></h3>';
+            $contenu .= '<p>' . $d->descr . '</p>';
+            $contenu .= '<p>Prix : ' . $d->prix . '</p>';
+            $contenu .= '<a href="' . $this->app->urlFor('ajouter', ['id' => $d->id]) . '"><img src="' . $uri . '/web/img/add.png" width="32" alt="Ajouter"></a>';
+            $contenu .= '<p><a href="' . $this->app->urlFor('prestation', ['id' => $d->id]) . '">Voir plus &rarr;</a></p>';
+
+
         }
         return $contenu;
     }
     private function prestation(){
         $uri = $this->app->request->getRootUri();
-        $contenu = '<h2>Prestation : ' . $this->data[0]['nom'] . '</h2>';
-        $contenu .= '<p>' . $this->data[0]['descr'] . '</p>';
-        $contenu .= '<p>Prix : ' . $this->data[0]['prix'] . '</p>';
-        $contenu .= '<a href="' . $this->app->urlFor('ajouter', ['id' => $this->data[0]['id']]) . '"><img src="' . $uri . '/web/img/add.png" width="32" alt="Ajouter"></a>';
+        $contenu = '<h2>Prestation : ' . $this->data[0]->nom . '</h2>';
+        $contenu .= '<p>' . $this->data[0]->descr . '</p>';
+        $contenu .= '<p>Prix : ' . $this->data[0]->prix . '</p>';
+        $contenu .= '<a href="' . $this->app->urlFor('ajouter', ['id' => $this->data[0]->id]) . '"><img src="' . $uri . '/web/img/add.png" width="32" alt="Ajouter"></a>';
         $contenu .= '<p><a href="' . $this->app->urlFor('prestations', ['order' => 'asc']) . '">Liste des prestations</a></p>';
         return $contenu;
     }

@@ -39,7 +39,7 @@ $app->get('/prestations/all/:order', function($order){
 	}else{
 		$liste = \giftbox\models\Prestation::all()->sortBy('prix');
 	}
-	$vue = new \giftbox\view\PrestaView($app, $liste->toArray());
+    $vue = new \giftbox\view\PrestaView($app, $liste);
 	$html = new \giftbox\view\htmlView($vue->render(1));
 	$html->render();
 })->name('prestations');
