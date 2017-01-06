@@ -9,6 +9,8 @@
 namespace giftbox\view;
 
 
+use giftbox\models\Coffret;
+use giftbox\models\CoffretContenu;
 use giftbox\models\Prestation;
 
 class PanierView
@@ -167,23 +169,27 @@ class PanierView
 		$contenu = '';
 		$errorsMessage = '';
 		$data = $this->app->request->post();
-		foreach ($data as $k => $v) {
-			if (!empty($v)) {
-				$data[$k] = filter_var($v, FILTER_SANITIZE_STRING);
-				if ($k === 'email') {
-					$data[$k] = filter_var($v, FILTER_SANITIZE_STRING);
-					if(!filter_var($data[$k], FILTER_VALIDATE_EMAIL)) {
-						$errors[] = 'Email incorrect.';
-					}
-				}
-			} else {
-				$errors[] = ucfirst($k) .' incorrect.';
-			}
-		}
+		if (!is_null($data)) {
+            foreach ($data as $k => $v) {
+                if (!empty($v)) {
+                    $data[$k] = filter_var($v, FILTER_SANITIZE_STRING);
+                    if ($k === 'email') {
+                        if(!filter_var($data[$k], FILTER_VALIDATE_EMAIL)) {
+                            $errors[] = 'Email incorrect.';
+                        }
+                    }
+                } else {
+                    $errors[] = ucfirst($k) .' incorrect.';
+                }
+            }
 
-		if (strcmp($data['password'], $data['password_repeat']) != 0) {
-			$errors[] = 'Les mots de passes ne correspondent pas.';
-		}
+            if (strcmp($data['password'], $data['password_repeat']) != 0) {
+                $errors[] = 'Les mots de passes ne correspondent pas.';
+            }
+        } else {
+            $this->app->flash('error', 'Erreur dans le formulaire');
+            $this->app->response->redirect($this->app->urlFor('informations'), 200);
+        }
 
 		if (!empty($errors)) {
             $errorsMessage .= '<ul>';
@@ -193,11 +199,12 @@ class PanierView
 			}
             $errorsMessage .= '</ul>';
             $this->app->flash('error', $errorsMessage);
-            $this->app->response->redirect($this->app->urlFor('panier'), 200);
+            $this->app->response->redirect($this->app->urlFor('informations'), 200);
 		} else {
 			$uri = $this->app->request->getRootUri();
-			$data['url'] = $uri . '/coffret/edit/URL_A_FAIRE';
-			$data['urlGestion'] = $uri . '/coffret/edit/URL_A_FAIRE';
+            $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT, ['cost' => 10]);
+			$data['url'] = uniqid();
+			$data['urlGestion'] = uniqid();
 			$data['statut'] = 0;
 			$data['montant'] = 0;
 			
@@ -214,10 +221,23 @@ class PanierView
 
 	private function save() {
 		if (isset($_SESSION['coffret'])) {
-            $this->app->flash('success', 'Coffret sauvegardé avec succès ');
-            $this->app->response->redirect($this->app->urlFor('index'), 200);
-			\giftbox\models\Coffret::create($_SESSION['coffret']);
+			$coffret = Coffret::create($_SESSION['coffret']);
+            $coffret_id = $coffret->id;
+            foreach ($_SESSION['panier']['article'] as $article => $a) {
+                CoffretContenu::create(
+                    array(
+                        'coffret_id' => $coffret_id,
+                        'prestation_id' => $a['id'],
+                        'qua' => $a['qua']
+                    )
+                );
+            }
+            $urlCoffret = 'URL Coffret : http://' . $_SERVER['HTTP_HOST'] . '/coffret/' . $coffret->url;
+            $urlGestionCoffret = 'URL Coffret : http://' . $_SERVER['HTTP_HOST'] . '/coffret/edit' . $coffret->urlGestion;
+            unset($_SESSION['panier']);
 			unset($_SESSION['coffret']);
+            $this->app->flash('success', '<p>Coffret sauvegardé avec succès</p><p>' . $urlCoffret . '</p><p>' . $urlGestionCoffret . '</p>');
+            $this->app->response->redirect($this->app->urlFor('index'), 200);
 		}
 		return null;
 	}
