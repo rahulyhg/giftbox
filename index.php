@@ -6,14 +6,24 @@
  * Time: 16:34
  */
 
-session_start();
-
 require 'vendor/autoload.php';
 
 \giftbox\Factory\ConnectionFactory::setConfig('src/giftbox/conf/conf.ini');
 \giftbox\Factory\ConnectionFactory::makeConnection();
 
 $app = new \Slim\Slim();
+
+$app->add(new \Slim\Middleware\SessionCookie(array(
+    'expires' => '20 minutes',
+    'path' => '/',
+    'domain' => null,
+    'secure' => false,
+    'httponly' => false,
+    'name' => 'slim_session',
+    'secret' => 'CHANGE_ME',
+    'cipher' => MCRYPT_RIJNDAEL_256,
+    'cipher_mode' => MCRYPT_MODE_CBC
+)));
 
 $app->get('/',function(){
 	ob_start();
@@ -63,7 +73,6 @@ $app->get('/prestation/add/:id', function($id) {
 	$vue = new \giftbox\view\PanierView($app, [$id]);
 	$html = new \giftbox\view\htmlView($vue->render('add'));
 	$html->render();
-	$app->response->redirect($app->urlFor('panier'), 200);
 })->name('ajouter');
 
 $app->get('/prestation/delete/:id', function($id) {
@@ -71,7 +80,6 @@ $app->get('/prestation/delete/:id', function($id) {
 	$vue = new \giftbox\view\PanierView($app, [$id]);
 	$html = new \giftbox\view\htmlView($vue->render('remove'));
 	$html->render();
-	$app->response->redirect($app->urlFor('panier'), 200);
 })->name('supprimer');
 
 $app->get('/panier', function() {

@@ -62,14 +62,13 @@ class PanierView
 		$html .= '<tr><td colspan="' . (is_null($recap) ? 3 : 2) . '" style="text-align: right">Total:</td><td>' . $total . ' &euro;</td></tr>';
 		$html .= '</tfoot>';
 		$html .= '<table>';
-		if (isset($_SESSION['panier']) && is_null($recap)) {
+		if ((isset($_SESSION['panier']) && is_null($recap)) || (isset($_SESSION['panier']) && $_SESSION['panier']['qua'] == 0)) {
 			$html .= '<p><a href="' . $this->app->urlFor('informations') . '">Sauvegarder le coffret</a></p>';
 		}
 		return $html;
 	}
 
 	private function add() {
-		$html = '';
 		$prestationId = $this->data[0];
 		$prestation = Prestation::where('id', '=', $prestationId)->first();
 		if (!empty($prestation)) {
@@ -96,59 +95,77 @@ class PanierView
 					);
 				}
 			}
-			$html = '<div class="alert alert-success">Prestation ajoutée au panier</div>';
+            $this->app->flash('success', 'Prestation ajoutée du panier');
+            $this->app->response->redirect($this->app->urlFor('panier'), 200);
 		} else {
-			$html = '<div class="alert alert-error">Impossible de trouver la prestation</div>';
+            $this->app->flash('error', 'Impossible de trouver la prestation');
+            $this->app->response->redirect($this->app->urlFor('panier'), 200);
 		}
-		return $html;
+		return null;
 	}
 
 	public function remove(){
-		$html = '';
 		$prestation = Prestation::where('id', '=', $this->data[0])->first();
-		if (isset($_SESSION['panier']['article'][$prestation->nom])) {
-			$_SESSION['panier']['qua'] = ($_SESSION['panier']['qua'] - 1);
-			if ($_SESSION['panier']['article'][$prestation->nom]['qua'] == 1) {
-				unset($_SESSION['panier']['article'][$prestation->nom]);
-			} else {
-				$_SESSION['panier']['article'][$prestation->nom]['qua'] = ($_SESSION['panier']['article'][$prestation->nom]['qua'] - 1);
-				$_SESSION['panier']['article'][$prestation->nom]['prix'] = ($_SESSION['panier']['article'][$prestation->nom]['prix'] - $prestation->prix);
-			}
-			$html .= '<div class="alert alert-success">Prestation supprimée du panier</div>';
-		} else {
-			$html .= '<div class="alert alert-error">Whoops ! Des erreurs ont été rencontrées</div>';
-		}
-		return $html;
+		if ($prestation != null) {
+            if (isset($_SESSION['panier']['article'][$prestation->nom])) {
+                $_SESSION['panier']['qua'] = ($_SESSION['panier']['qua'] - 1);
+                if ($_SESSION['panier']['article'][$prestation->nom]['qua'] == 1) {
+                    unset($_SESSION['panier']['article'][$prestation->nom]);
+                } else {
+                    $_SESSION['panier']['article'][$prestation->nom]['qua'] = ($_SESSION['panier']['article'][$prestation->nom]['qua'] - 1);
+                    $_SESSION['panier']['article'][$prestation->nom]['prix'] = ($_SESSION['panier']['article'][$prestation->nom]['prix'] - $prestation->prix);
+                }
+                $this->app->flash('success', 'Prestation supprimée du panier');
+                $this->app->response->redirect($this->app->urlFor('panier'), 200);
+            } else {
+                $this->app->flash('success', 'Whoops ! Des erreurs ont été rencontrées');
+                $this->app->response->redirect($this->app->urlFor('panier'), 200);
+            }
+        } else {
+            $this->app->flash('info', 'Impossible de supprimer le prestation du panier.');
+            $this->app->response->redirect($this->app->urlFor('panier'), 200);
+        }
+		return null;
 	}
 
 	private function informations() {
-		$formulaire = '<form id="formulaire" action="' . $this->app->urlFor('validation') . '" method="post">';
-		$formulaire .= '<label for="nom">Nom : </label>';
-		$formulaire .= '<input type="text" name="nom"id="nom" placeholder="Nom">';
-		$formulaire .= '<label for="prenom">Prénom : </label>';
-		$formulaire .= '<input type="text" name="prenom" id="prenom" placeholder="Prénom">';
-		$formulaire .= '<label for="email">Email : </label>';
-		$formulaire .= '<input type="email" name="email" id="email" placeholder="Email">';
-		$formulaire .= '<label for="message">Message : </label>';
-		$formulaire .= '<textarea name="message" id="message" cols="50" rows="5"></textarea>';
-		$formulaire .= '<label for="password">Mot de passe : </label>';
-		$formulaire .= '<input type="password" name="password" id="password" placeholder="Mot de passe">';
-		$formulaire .= '<label for="password_repeat">Mot de passe (Vérif.) : </label>';
-		$formulaire .= '<input type="password" name="password_repeat" id="password_repeat" placeholder="Mot de passe (Vérif.)">';
-		$formulaire .= '<label for="paiement">Mode de paiement : </label>';
-		$formulaire .= '<select name="paiement">';
-		$formulaire .= '<option value="classique">Classique</value>';
-		$formulaire .= '<option value="cagnotte">Cagnotte</value>';
-		$formulaire .= '</select>';
-		$formulaire .= '<button>Valider</button>';
-		$formulaire .= '</form>';
-		return $formulaire;
+        if (isset($_SESSION['panier'])) {
+            if (count($_SESSION['panier']['article']) >= 2) {
+                $formulaire = '<form id="formulaire" action="' . $this->app->urlFor('validation') . '" method="post">';
+                $formulaire .= '<label for="nom">Nom : </label>';
+                $formulaire .= '<input type="text" name="nom"id="nom" placeholder="Nom" required>';
+                $formulaire .= '<label for="prenom">Prénom : </label>';
+                $formulaire .= '<input type="text" name="prenom" id="prenom" placeholder="Prénom" required>';
+                $formulaire .= '<label for="email">Email : </label>';
+                $formulaire .= '<input type="email" name="email" id="email" placeholder="Email" required>';
+                $formulaire .= '<label for="message">Message : </label>';
+                $formulaire .= '<textarea name="message" id="message" cols="50" rows="5" required></textarea>';
+                $formulaire .= '<label for="password">Mot de passe : </label>';
+                $formulaire .= '<input type="password" name="password" id="password" placeholder="Mot de passe" required>';
+                $formulaire .= '<label for="password_repeat">Mot de passe (Vérif.) : </label>';
+                $formulaire .= '<input type="password" name="password_repeat" id="password_repeat" placeholder="Mot de passe (Vérif.)" required>';
+                $formulaire .= '<label for="paiement">Mode de paiement : </label>';
+                $formulaire .= '<select name="paiement">';
+                $formulaire .= '<option value="classique">Classique</value>';
+                $formulaire .= '<option value="cagnotte">Cagnotte</value>';
+                $formulaire .= '</select>';
+                $formulaire .= '<button>Valider</button>';
+                $formulaire .= '</form>';
+                return $formulaire;
+            } else {
+                $this->app->flash('info', 'Il vous faut au moins une prestation de deux catégories différentes.');
+                $this->app->response->redirect($this->app->urlFor('panier'), 200);
+            }
+        } else {
+            $this->app->flash('info', 'Votre panier est vide !');
+            $this->app->response->redirect($this->app->urlFor('panier'), 200);
+        }
 	}
 
 	private function validation() {
 		$errors = array();
 		$contenu = '';
-		
+		$errorsMessage = '';
 		$data = $this->app->request->post();
 		foreach ($data as $k => $v) {
 			if (!empty($v)) {
@@ -169,13 +186,14 @@ class PanierView
 		}
 
 		if (!empty($errors)) {
-			$contenu .= '<ul class="alert alert-error">';
-			$contenu .= 'Whoops, des erreurs ont été rencontrées :';
+            $errorsMessage .= '<ul>';
+            $errorsMessage .= 'Whoops, des erreurs ont été rencontrées :';
 			foreach ($errors as $error) {
-				$contenu .= '<li>' . $error . '</li>';
+                $errorsMessage .= '<li>' . $error . '</li>';
 			}
-			$contenu .= '</ul>';
-			$this->app->response->redirect($this->app->urlFor('informations'), 200);
+            $errorsMessage .= '</ul>';
+            $this->app->flash('error', $errorsMessage);
+            $this->app->response->redirect($this->app->urlFor('panier'), 200);
 		} else {
 			$uri = $this->app->request->getRootUri();
 			$data['url'] = $uri . '/coffret/edit/URL_A_FAIRE';
@@ -195,13 +213,13 @@ class PanierView
 	}
 
 	private function save() {
-		$contenu = '';
 		if (isset($_SESSION['coffret'])) {
-			$contenu .= '<div class="alert alert-success">Coffret sauvegardé avec succès !</div>';
+            $this->app->flash('success', 'Coffret sauvegardé avec succès ');
+            $this->app->response->redirect($this->app->urlFor('index'), 200);
 			\giftbox\models\Coffret::create($_SESSION['coffret']);
 			unset($_SESSION['coffret']);
 		}
-		return $contenu;
+		return null;
 	}
 
 	public function render($v) {

@@ -7,6 +7,12 @@
  * Time: 10:49
  */
 $directory = '/projet_giftbox/';
+$flash = \Slim\Slim::getInstance()->flashData();
+$flashMessage = '';
+if ($flash != null) {
+    $alertType = array_keys($flash)[0];
+    $flashMessage = '<div class="alert alert-' . $alertType . '">' . $flash[$alertType] . '</div>';
+}
 echo '<!DOCTYPE html>
  <html>
     <head>
@@ -23,6 +29,7 @@ echo '<!DOCTYPE html>
                 <li><a href="' . $directory . 'categories">categories</a></li>
             </ul>
         </nav>
+        ' . $flashMessage . '
         <content>' . $content . '</content>
     </body>
 </html>
