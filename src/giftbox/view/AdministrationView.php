@@ -69,7 +69,6 @@ class AdministrationView {
 			if (!is_null($administrateur)) {
 				if (password_verify($data['password'], $administrateur->password)) {
 					$_SESSION['admin'] = $administrateur->id;
-					var_dump($_SESSION);
 					$this->app->flash('success', 'Vous êtes maintenant connecté');
 					$this->app->response->redirect($this->app->urlFor('administration.prestations'), 200);
 				} else {
@@ -94,7 +93,8 @@ class AdministrationView {
 
 	private function prestations() {
 		$prestations = Prestation::all();
-		$contenu = '<table>';
+		$contenu = '<p><a href="' . $this->app->urlFor('prestation.ajouter') . '">Ajouter une prestation</p>';
+		$contenu .= '<table>';
 		$contenu .= '<caption>Prestations : ' . count($prestations) . '</caption>';
 		$contenu .= '<thead>';
 		$contenu .= '<tr>';
@@ -203,6 +203,91 @@ class AdministrationView {
 		return null;
 	}
 
+	private function ajouter() {
+		$contenu = '';
+		if (isset($_SESSION['admin'])) {
+			$categories = Categorie::all();
+			$contenu = '<form action="' . $this->app->urlFor('administration.prestation.ajouter') . '" method="post" enctype="multipart/form-data">';
+			$contenu .= '<label for="nom">Nom :</label>';
+			$contenu .= '<input type="text" name="nom" id="nom" required>';
+			$contenu .= '<label for="descr">Description :</label>';
+			$contenu .= '<textarea name="descr" id="message" cols="50" rows="5" required></textarea>';
+			$contenu .= '<label for="prix">Prix :</label>';
+			$contenu .= '<input type="text" name="prix" id="prix" required>';
+			$contenu .= '<label for="cat_id">Catégorie :</label>';
+			$contenu .= '<select name="cat_id">';
+			foreach ($categories as $categorie => $c) {
+				$contenu .= '<option value="' . $c->id . '">' . $c->nom . '</value>';
+			}
+			$contenu .= '</select>';
+			$contenu .= '<label for="img">Image :</label>';
+			$contenu .= '<input type="file" name="img" id="img" accept="image/*" required>';
+			$contenu .= '<label for="visible">Visible :</label>';
+			$contenu .= '<input type="checkbox" name="visible" id="visible" value="visible" checked>';
+			$contenu .= '<button value="Ajouter">Ajouter</button>';
+			$contenu .= '</form>';
+		} else {
+			$this->app->flash('error', 'Vous n\'avez pas l\'autorisation pour faire cette action !');
+			$this->app->response->redirect($this->app->urlFor('index'), 200);
+		}
+		return $contenu;
+	}
+
+	private function ajouterPrestation() {
+		if (isset($_SESSION['admin'])) {
+			$errors = array();
+			$contenu = '';
+			$data = $this->app->request->post();
+			if (!is_null($data)) {
+				foreach ($data as $k => $v) {
+					if (!empty($v)) {
+						$data[$k] = filter_var($v, FILTER_SANITIZE_STRING);
+						if ($k === 'email') {
+							if(!filter_var($data[$k], FILTER_VALIDATE_EMAIL)) {
+								$errors[] = 'Email incorrect.';
+							}
+						}
+					} else {
+						$errors[] = ucfirst($k) .' incorrect.';
+					}
+				}
+			} else {
+				$this->app->flash('error', 'Erreur dans le formulaire');
+				$this->app->response->redirect($this->app->urlFor('administration'), 200);
+			}
+			
+			if (!empty($errors)) {
+				$errorsMessage = '<ul>';
+				$errorsMessage .= 'Whoops, des erreurs ont été rencontrées :';
+				foreach ($errors as $error) {
+					$errorsMessage .= '<li>' . $error . '</li>';
+				}
+				$errorsMessage .= '</ul>';
+				$this->app->flash('error', $errorsMessage);
+				$this->app->response->redirect($this->app->urlFor('informations'), 200);
+			} else {
+				$data['votes'] = 0;
+				if (!isset($data['visible'])) {
+					$data['visible'] = 0;
+				} else {
+					$data['visible'] = 1;
+				}
+				if (isset($_FILES['img'])) {
+					$uri = $this->app->request->getRootUri();
+					move_uploaded_file($_FILES['img']['tmp_name'], 'web/img/' . $_FILES['img']['name']);
+					$data['img'] = $_FILES['img']['name'];
+				} else {
+					$data['img'] = 'noImage.png';
+				}
+				Prestation::create($data);
+			}
+		} else {
+			$this->app->flash('error', 'Vous n\'avez pas l\'autorisation pour faire cette action !');
+			$this->app->response->redirect($this->app->urlFor('index'), 200);
+		}
+		return null;
+	}
+
 	public function render($aff) {
 		switch($aff) {
 			case 'connexion':
@@ -227,6 +312,14 @@ class AdministrationView {
 
 			case 'afficher':
 				$content = $this->afficher();
+				break;
+
+			case 'ajouter':
+				$content = $this->ajouter();
+				break;
+
+			case 'ajouterPrestation':
+				$content = $this->ajouterPrestation();
 				break;
 
 			case 'index':

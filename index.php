@@ -183,5 +183,19 @@ $app->get('/administration/prestation/supprimer/:id', function($id){
     $html->render();
 })->name('prestation.supprimer');
 
+$app->get('/administration/prestation/ajouter', function(){
+    $app = \Slim\Slim::getInstance();
+    $vue = new \giftbox\view\AdministrationView($app);
+   	$html = new giftbox\view\adminView($vue->render('ajouter'));
+    $html->render();
+})->name('prestation.ajouter');
+
+$app->post('/administration/prestation/ajouts', function(){
+    $app = \Slim\Slim::getInstance();
+    $vue = new \giftbox\view\AdministrationView($app);
+   	$html = new giftbox\view\adminView($vue->render('ajouterPrestation'));
+    $html->render();
+})->name('administration.prestation.ajouter');
+
 
 $app->run();

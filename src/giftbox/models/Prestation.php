@@ -13,7 +13,7 @@ class Prestation extends \Illuminate\Database\Eloquent\Model
 {
     protected $table = 'prestation';
     protected $primaryKey = 'id';
-    protected $fillable = array('id', 'nom', 'descr', 'cat_id', 'img', 'prix', 'visible');
+    protected $fillable = array('id', 'nom', 'descr', 'cat_id', 'img', 'prix', 'votes', 'visible');
     public $timestamps = false;
 
     public function prestations(){

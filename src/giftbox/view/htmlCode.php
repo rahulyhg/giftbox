@@ -8,6 +8,9 @@
  */
 
 $directory = \Slim\Slim::getInstance()->request->getRootUri();
+if (strstr($directory, 'index.php')) {
+    $directory = str_replace('index.php', '', $directory);
+}
 
 $flash = \Slim\Slim::getInstance()->flashData();
 $flashMessage = '';
