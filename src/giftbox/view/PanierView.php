@@ -232,8 +232,8 @@ class PanierView
                     )
                 );
             }
-            $urlCoffret = 'URL Coffret : http://' . $_SERVER['HTTP_HOST'] . '/coffret/' . $coffret->url;
-            $urlGestionCoffret = 'URL Coffret : http://' . $_SERVER['HTTP_HOST'] . '/coffret/edit' . $coffret->urlGestion;
+            $urlCoffret = 'URL Coffret : http://' . $_SERVER['HTTP_HOST']. $this->app->urlFor('coffret', ['url' => $coffret->url]);
+            $urlGestionCoffret = 'URL Coffret gestion : http://'. $_SERVER['HTTP_HOST'] . $this->app->urlFor('coffret_ges', ['url' => $coffret->url]);
             unset($_SESSION['panier']);
 			unset($_SESSION['coffret']);
             $this->app->flash('success', '<p>Coffret sauvegardé avec succès</p><p>' . $urlCoffret . '</p><p>' . $urlGestionCoffret . '</p>');
