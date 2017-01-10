@@ -141,7 +141,7 @@ $app->get('/administration', function(){
     $html->render();
 })->name('administration');
 
-$app->get('/deconnexion', function(){
+$app->get('/administration/deconnexion', function(){
     $app = \Slim\Slim::getInstance();
     $vue = new \giftbox\view\AdministrationView($app);
    	$html = new giftbox\view\htmlView($vue->render('deconnexion'));
