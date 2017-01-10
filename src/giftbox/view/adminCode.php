@@ -27,7 +27,6 @@ echo '<!DOCTYPE html>
             <ul>
                 <li><a href="' . $directory . '">Site</a></li>
                 <li><a href="' . $directory . '/prestations/all/asc">Prestations</a></li>
-                <li><a href="' . $directory . '/categories">Categories</a></li>
                 <li><a href="' . $directory . '/administration">Administration</a>' . (isset($_SESSION['admin']) ? '&nbsp;|&nbsp;<a href="deconnexion">Se deconnecter</a>' : '') . '</li>
             </ul>
         </nav>
