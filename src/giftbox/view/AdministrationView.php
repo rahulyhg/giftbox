@@ -122,13 +122,13 @@ class AdministrationView {
 			$contenu .= '<td>' . $p->nom . '</td>';
 			$contenu .= '<td>' . $p->prix . '</td>';
 			$contenu .= '<td>' . $moyenne . '</td>';
-			$contenu .= '<td>' . (($p->visible == 1) ? 'Visible' : 'Cachée') . '</td>';
+			$contenu .= '<td>' . (($p->visible == 1) ? 'Visible' : 'Masquée') . '</td>';
 			$contenu .= '<td>';
-			$contenu .= '<a href="' . $this->app->urlFor('prestation.supprimer', ['id' => $p->id]) . '">Supprimer</a>';
+			$contenu .= '<a  onclick="return confirm(\'Voulez vous supprimer cette prestation ?\')" href="' . $this->app->urlFor('prestation.supprimer', ['id' => $p->id]) . '">Supprimer</a>';
 			if ($p->visible == 0) {
-				$contenu .= '&nbsp;|&nbsp;<a href="' . $this->app->urlFor('prestation.afficher', ['id' => $p->id]) . '">Afficher</a>';
+				$contenu .= '&nbsp;|&nbsp;<a onclick="return confirm(\'Voulez vous afficher cette prestation ?\')" href="' . $this->app->urlFor('prestation.afficher', ['id' => $p->id]) . '">Afficher</a>';
 			} else {
-				$contenu .= '&nbsp;|&nbsp;<a href="' . $this->app->urlFor('prestation.cacher', ['id' => $p->id]) . '">Cacher</a>';
+				$contenu .= '&nbsp;|&nbsp;<a onclick="return confirm(\'Voulez vous masquer cette prestation ?\')" href="' . $this->app->urlFor('prestation.cacher', ['id' => $p->id]) . '">Masquer</a>';
 			}
 			$contenu .= '</td>';
 			$contenu .= '</tr>';
@@ -149,7 +149,15 @@ class AdministrationView {
 
 	private function supprimer() {
 		if (isset($_SESSION['admin'])) {
-			
+			$prestation = Prestation::where('id', '=', $this->data[0])->first();
+			if (!is_null($prestation)) {
+				Prestation::destroy($prestation->id);
+				$this->app->flash('success', 'Prestation supprimée avec succès');
+				$this->app->response->redirect($this->app->urlFor('administration.prestations'), 200);
+			} else {
+				$this->app->flash('info', 'Prestation introuvable');
+				$this->app->response->redirect($this->app->urlFor('administration.prestations'), 200);
+			}
 		} else {
 			$this->app->flash('error', 'Vous n\'avez pas l\'autorisation pour faire cette action !');
 			$this->app->response->redirect($this->app->urlFor('index'), 200);

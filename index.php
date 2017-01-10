@@ -179,7 +179,7 @@ $app->get('/administration/prestation/afficher/:id', function($id){
 $app->get('/administration/prestation/supprimer/:id', function($id){
     $app = \Slim\Slim::getInstance();
     $vue = new \giftbox\view\AdministrationView($app, [$id]);
-   	$html = new giftbox\view\adminView($vue->render('cacher'));
+   	$html = new giftbox\view\adminView($vue->render('supprimer'));
     $html->render();
 })->name('prestation.supprimer');
 
