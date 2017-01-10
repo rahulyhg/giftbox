@@ -48,3 +48,29 @@ label, button, input, select {
 	display: block;
 	width: 150px;
 }
+
+.notation {
+	text-align: left;
+	width: 100px;
+	height: 35px;
+}
+
+.notation .stars {
+	text-align: left;
+}
+
+.notation .stars a {
+	float: right;
+	color: #aaa;
+	text-decoration: none;
+	font-size: 24px;
+	transition: color .4s;
+}
+
+.notation .stars a:hover,
+.notation .stars a:focus,
+.notation .stars a:hover ~ a,
+.notation .stars a:focus ~ a {
+	color: orange;
+	cursor: pointer;
+}

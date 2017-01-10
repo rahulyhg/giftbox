@@ -26,10 +26,10 @@ $app->add(new \Slim\Middleware\SessionCookie(array(
 )));
 
 $app->get('/',function(){
-	ob_start();
-	$content = "<h1>home</h1>";
-	include "src/giftbox/view/htmlCode.php";
-	ob_end_flush();
+	$app = \Slim\Slim::getInstance();
+	$vue = new \giftbox\view\PrestaView($app);
+	$html = new \giftbox\view\htmlView($vue->render('index'));
+	$html->render();
 })->name('index');
 
 $app->get('/prestations/all/:order', function($order){
@@ -118,6 +118,7 @@ $app->get('/coffret/edit/:url', function($url){
     $html = new giftbox\view\htmlView($vue->render('gestion_coffret'));
     $html->render();
 })->name('coffret_ges');
+
 $app->get('/coffret/:url', function($url){
     $app = \Slim\Slim::getInstance();
     $coffret = \giftbox\models\Coffret::where('url', '=', $url)->first();
@@ -125,4 +126,12 @@ $app->get('/coffret/:url', function($url){
     $html = new giftbox\view\htmlView($vue->render('coffret'));
     $html->render();
 })->name('coffret');
+
+$app->get('/note/:id/:note', function($id, $note){
+    $app = \Slim\Slim::getInstance();
+    $vue = new \giftbox\view\PrestaView($app, [$id, $note]);
+    $html = new giftbox\view\htmlView($vue->render('note'));
+    $html->render();
+})->name('notation');
+
 $app->run();
