@@ -18,4 +18,11 @@ class CoffretContenu extends Model
     public $fillable = array('coffret_id', 'prestation_id', 'qua');
     public $timestamps = false;
 
+    public function coffret(){
+        return $this->belongsTo('\giftbox\models\Coffret', 'coffret_id')->first();
+    }
+
+    public function prestation(){
+        return $this->belongsTo('\giftbox\models\Prestation', 'prestation_id')->first();
+    }
 }

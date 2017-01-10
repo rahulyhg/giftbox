@@ -10,4 +10,7 @@ class Coffret extends \Illuminate\Database\Eloquent\Model
     protected $fillable = array('id', 'nom', 'prenom', 'email', 'message', 'password', 'paiement', 'url', 'urlGestion', 'statut', 'montant');
     public $timestamps = false;
 
+    public function prestationsCoffret(){
+        return $this->hasMany('\giftbox\models\CoffretContenu', 'coffret_id')->get();
+    }
 }
