@@ -20,7 +20,16 @@ class CoffretView
         $this->data = $array;
     }
     private function gererCoffret(){
-        return "gestion coffret";
+        // gerer la connexion grace au mdp du coffret
+        $contenu = "<h1>Gestion du coffret</h1>";
+        $contenu.= "<h2>Statut du coffret : " . $this->data[0]->statut . "</h2>";
+
+
+
+
+
+
+        return $contenu;
     }
     private function afficherCoffret(){
         $contenu = "<h1>Contenu de votre coffret</h1>";
