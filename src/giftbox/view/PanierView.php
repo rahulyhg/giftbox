@@ -205,7 +205,7 @@ class PanierView
             $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT, ['cost' => 10]);
 			$data['url'] = uniqid();
 			$data['urlGestion'] = uniqid();
-			$data['statut'] = 0;
+			$data['statut'] = "transmise au destinataire";
 			$data['montant'] = 0;
 			
 			foreach ($_SESSION['panier']['article'] as $article => $a) {
@@ -233,7 +233,7 @@ class PanierView
                 );
             }
             $urlCoffret = 'URL Coffret : http://' . $_SERVER['HTTP_HOST']. $this->app->urlFor('coffret', ['url' => $coffret->url]);
-            $urlGestionCoffret = 'URL Coffret gestion : http://'. $_SERVER['HTTP_HOST'] . $this->app->urlFor('coffret_ges', ['url' => $coffret->url]);
+            $urlGestionCoffret = 'URL Coffret gestion : http://'. $_SERVER['HTTP_HOST'] . $this->app->urlFor('coffret_ges', ['url' => $coffret->urlGestion]);
             unset($_SESSION['panier']);
 			unset($_SESSION['coffret']);
             $this->app->flash('success', '<p>Coffret sauvegardé avec succès</p><p>' . $urlCoffret . '</p><p>' . $urlGestionCoffret . '</p>');
