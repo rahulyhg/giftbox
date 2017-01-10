@@ -35,9 +35,9 @@ $app->get('/',function(){
 $app->get('/prestations/all/:order', function($order){
 	$app = \Slim\Slim::getInstance();
 	if ($order == "desc"){
-		$liste = \giftbox\models\Prestation::all()->sortByDesc('prix');
+		$liste = \giftbox\models\Prestation::where('visible', '=', 1)->get()->sortByDesc('prix');
 	}else{
-		$liste = \giftbox\models\Prestation::all()->sortBy('prix');
+		$liste = \giftbox\models\Prestation::where('visible', '=', 1)->get()->sortBy('prix');
 	}
     $vue = new \giftbox\view\PrestaView($app, $liste);
 	$html = new \giftbox\view\htmlView($vue->render(1));
@@ -133,5 +133,55 @@ $app->get('/note/:id/:note', function($id, $note){
     $html = new giftbox\view\htmlView($vue->render('note'));
     $html->render();
 })->name('notation');
+
+$app->get('/administration', function(){
+    $app = \Slim\Slim::getInstance();
+    $vue = new \giftbox\view\AdministrationView($app);
+   	$html = new giftbox\view\htmlView($vue->render('index'));
+    $html->render();
+})->name('administration');
+
+$app->get('/deconnexion', function(){
+    $app = \Slim\Slim::getInstance();
+    $vue = new \giftbox\view\AdministrationView($app);
+   	$html = new giftbox\view\htmlView($vue->render('deconnexion'));
+    $html->render();
+})->name('deconnexion');
+
+$app->post('/administration/connexion', function() {
+	$app = \Slim\Slim::getInstance();
+    $vue = new \giftbox\view\AdministrationView($app);
+    $html = new giftbox\view\htmlView($vue->render('connexion'));
+    $html->render();
+})->name('administration.connexion');
+
+$app->get('/administration/prestations', function(){
+    $app = \Slim\Slim::getInstance();
+    $vue = new \giftbox\view\AdministrationView($app);
+   	$html = new giftbox\view\adminView($vue->render('aprestations'));
+    $html->render();
+})->name('administration.prestations');
+
+$app->get('/administration/prestation/cacher/:id', function($id){
+    $app = \Slim\Slim::getInstance();
+    $vue = new \giftbox\view\AdministrationView($app, [$id]);
+   	$html = new giftbox\view\adminView($vue->render('cacher'));
+    $html->render();
+})->name('prestation.cacher');
+
+$app->get('/administration/prestation/afficher/:id', function($id){
+    $app = \Slim\Slim::getInstance();
+    $vue = new \giftbox\view\AdministrationView($app, [$id]);
+   	$html = new giftbox\view\adminView($vue->render('afficher'));
+    $html->render();
+})->name('prestation.afficher');
+
+$app->get('/administration/prestation/supprimer/:id', function($id){
+    $app = \Slim\Slim::getInstance();
+    $vue = new \giftbox\view\AdministrationView($app, [$id]);
+   	$html = new giftbox\view\adminView($vue->render('cacher'));
+    $html->render();
+})->name('prestation.supprimer');
+
 
 $app->run();

@@ -18,18 +18,17 @@ if ($flash != null) {
 echo '<!DOCTYPE html>
  <html>
     <head>
-        <title>Accueil</title>
+        <title>Administration</title>
         <meta charset="UTF-8">
         <link rel="stylesheet" type="text/css" href="' . $directory . '/web/css/style.css">
     </head>
     <body>
-        <p><a href="' . $directory . 'panier"><img src="' . $directory . '/web/img/cart.png" alt="Panier" width="24" class="cart">Article(s) : ' . (isset($_SESSION['panier']) ? $_SESSION['panier']['qua'] : '0') . '</a></p>
         <nav>
             <ul>
-                <li><a href="' . $directory . '">Accueil</a></li>
-                <li><a href="' . $directory . '/prestations/all/asc">prestations</a></li>
-                <li><a href="' . $directory . '/categories">categories</a></li>
-                <li><a href="' . $directory . '/administration">Administration</a>' . (isset($_SESSION['admin']) ? '&nbsp;|&nbsp;<a href="' . $directory . '/deconnexion">Se deconnecter</a>' : '') . '</li>
+                <li><a href="' . $directory . '">Site</a></li>
+                <li><a href="' . $directory . '/prestations/all/asc">Prestations</a></li>
+                <li><a href="' . $directory . '/categories">Categories</a></li>
+                <li><a href="' . $directory . '/administration">Administration</a>' . (isset($_SESSION['admin']) ? '&nbsp;|&nbsp;<a href="deconnexion">Se deconnecter</a>' : '') . '</li>
             </ul>
         </nav>
         ' . $flashMessage . '
