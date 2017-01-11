@@ -67,6 +67,7 @@ class PrestaView
 		$uri = $this->app->request->getRootUri();
 		$notes = Note::where('prestationId', '=', $this->data[0]->id)->get(array('note'));
 		$moyenne = 0;
+		$notesTotal = 0;
 		if ($this->data[0]->votes > 0) {
 			foreach ($notes as $note => $n) {
 				$notesTotal = ($notesTotal + $n->note);

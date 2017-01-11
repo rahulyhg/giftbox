@@ -280,6 +280,8 @@ class AdministrationView {
 					$data['img'] = 'noImage.png';
 				}
 				Prestation::create($data);
+				$this->app->flash('success', 'Prestation ajoutée avec succès.');
+				$this->app->response->redirect($this->app->urlFor('administration.prestations'), 200);
 			}
 		} else {
 			$this->app->flash('error', 'Vous n\'avez pas l\'autorisation pour faire cette action !');
