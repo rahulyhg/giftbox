@@ -9,6 +9,7 @@
 namespace giftbox\view;
 
 
+use giftbox\models\Cagnotte;
 use giftbox\models\Coffret;
 use giftbox\models\CoffretContenu;
 use giftbox\models\Prestation;
@@ -208,7 +209,6 @@ class PanierView
             $this->app->flash('error', $errorsMessage);
             $this->app->response->redirect($this->app->urlFor('informations'), 200);
 		} else {
-			$uri = $this->app->request->getRootUri();
             if (!empty($password)) {
                 $data['password'] = password_hash($password, PASSWORD_DEFAULT, ['cost' => 10]);
             } else {
@@ -218,17 +218,47 @@ class PanierView
 			$data['urlGestion'] = uniqid();
 			$data['statut'] = 'payé';
             $data['montant'] = 0;
-			
+
 			foreach ($_SESSION['panier']['article'] as $article => $a) {
 				$data['montant'] += ($a['qua'] * $a['prix']);
 			}
 			$contenu .= '<p><u>Mode de paiement :</u> ' . $data['paiement'] . '</p>';
 			$contenu .= $this->render('recapitulatif');
 			$_SESSION['coffret'] = $data;
-			$contenu .= '<p><a href="' . $this->app->urlFor('paiement.form') . '">Sauvegarder le coffret</a></p>';
+            if (strcmp($data['paiement'], 'cagnotte') == 0) {
+                $contenu .= '<p><a href="' . $this->app->urlFor('cagnotte.creation') . '">Sauvegarder le coffret</a></p>';
+            } else {
+                $contenu .= '<p><a href="' . $this->app->urlFor('paiement.form') . '">Sauvegarder le coffret</a></p>';
+            }
 		}
 		return $contenu;
 	}
+
+	private function cagnotteCreation() {
+        if (isset($_SESSION['coffret'])) {
+            $coffret_id = $this->creerCoffret('cagnotte');
+            $cagnotte = array(
+                'coffret_id' => $coffret_id,
+                'montant' => 0,
+                'urlContribution' => uniqid(),
+                'urlGestion' => uniqid(),
+                'cloture' => 0
+            );
+            Cagnotte::create($cagnotte);
+
+            $urlCoffret = 'URL Cagnotte : http://' . $_SERVER['HTTP_HOST']. $this->app->urlFor('cagnotte.participation', ['url' => $cagnotte['urlContribution']]);
+            $gestion = '';
+            if (isset($_SESSION['coffret']['password'])) {
+                if ($_SESSION['coffret']['password'] != '') {
+                    $gestion = '<p>URL de gestion de la cagnotte : http://'. $_SERVER['HTTP_HOST'] . $this->app->urlFor('cagnotte.gestion', ['url' => $cagnotte['urlGestion']]) . '</p>';
+                }
+            }
+            $this->app->flash('success', '<p>Coffret sauvegardé avec succès</p><p>' . $urlCoffret . '</p>' . $gestion);
+            $this->app->response->redirect($this->app->urlFor('index'), 200);
+        } else {
+            $this->app->response->redirect($this->app->urlFor('index'), 200);
+        }
+    }
 
     private function paiementForm() {
         if (isset($_SESSION['coffret'])) {
@@ -278,17 +308,7 @@ class PanierView
                     $this->app->flash('error', $errorsMessage);
                     $this->app->response->redirect($this->app->urlFor('paiement.form'), 200);
                 } else {
-                    $coffret = Coffret::create($_SESSION['coffret']);
-                    $coffret_id = $coffret->id;
-                    foreach ($_SESSION['panier']['article'] as $article => $a) {
-                        CoffretContenu::create(
-                            array(
-                                'coffret_id' => $coffret_id,
-                                'prestation_id' => $a['id'],
-                                'qua' => $a['qua'],
-                            )
-                        );
-                    }
+                    $this->creerCoffret();
                     $urlCoffret = 'URL Coffret : http://' . $_SERVER['HTTP_HOST']. $this->app->urlFor('coffret', ['url' => $coffret->url]);
                     $gestion = '';
                     if (isset($_SESSION['coffret']['password'])) {
@@ -296,8 +316,6 @@ class PanierView
                             $gestion = '<p>URL Coffret gestion : http://'. $_SERVER['HTTP_HOST'] . $this->app->urlFor('coffret_ges', ['url' => $coffret->urlGestion]) . '</p>';
                         }
                     }
-                    //unset($_SESSION['panier']);
-                    //unset($_SESSION['coffret']);
                     $this->app->flash('success', '<p>Coffret sauvegardé avec succès</p><p>' . $urlCoffret . '</p>' . $gestion);
                     $this->app->response->redirect($this->app->urlFor('index'), 200);
                 }
@@ -309,6 +327,29 @@ class PanierView
             $this->app->response->redirect($this->app->urlFor('index'), 200);
         }
 	    return null;
+    }
+
+    private function creerCoffret($paiement = null) {
+        if (!is_null($paiement)) {
+            if (strcmp($paiement, 'cagnotte') == 0) {
+                $_SESSION['coffret']['url'] = '';
+                $_SESSION['coffret']['statut'] = 'impayé';
+            }
+        }
+        $coffret = Coffret::create($_SESSION['coffret']);
+        $coffret_id = $coffret->id;
+        foreach ($_SESSION['panier']['article'] as $article => $a) {
+            CoffretContenu::create(
+                array(
+                    'coffret_id' => $coffret_id,
+                    'prestation_id' => $a['id'],
+                    'qua' => $a['qua'],
+                )
+            );
+        }
+        unset($_SESSION['panier']);
+        unset($_SESSION['coffret']);
+        return $coffret_id;
     }
 
 	public function render($v) {
@@ -336,6 +377,10 @@ class PanierView
 
             case 'recapitulatif':
                 $content = $this->panier('recap');
+                break;
+
+            case 'cagnotteCreation':
+                $content = $this->cagnotteCreation();
                 break;
 
             case 'paiementForm':

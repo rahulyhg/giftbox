@@ -8,26 +8,17 @@
 
 namespace giftbox\models;
 
+use Illuminate\Database\Eloquent\Model;
 
-class Cagnotte extends \Illuminate\Database\Eloquent\Model
+class Cagnotte extends Model
 {
     protected $table = 'cagnotte';
     protected $primaryKey = 'id';
     protected $fillable = array('id', 'coffret_id', 'montant', 'urlContribution', 'urlGestion', 'cloture');
-    protected $timestamps = false;
+    public $timestamps = false;
 
     public function cagnottes(){
         return Cagnotte::all();
-    }
-
-    public function addCagnotte($coffret, $montant, $contribution, $gestion, $cloture){
-        Cagnotte::create(array(
-            'coffret_id' => $coffret,
-            'montant' => $montant,
-            'urlContribution' => $contribution,
-            'urlGestion' => $gestion,
-            'cloture' => $cloture
-        ));
     }
 
     public function getById($id){

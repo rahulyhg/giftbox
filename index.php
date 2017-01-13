@@ -133,6 +133,27 @@ $app->get('/coffret/:url', function($url){
     $html->render();
 })->name('coffret');
 
+$app->get('/cagnotte', function() {
+    $app = \Slim\Slim::getInstance();
+    $vue = new \giftbox\view\PanierView($app);
+    $html = new \giftbox\view\htmlView($vue->render('cagnotteCreation'));
+    $html->render();
+})->name('cagnotte.creation');
+
+$app->get('/cagnotte/participation/:url', function($url) {
+    $app = \Slim\Slim::getInstance();
+    $vue = new \giftbox\view\PanierView($app, $url);
+    $html = new \giftbox\view\htmlView($vue->render('cagnotteParticipation'));
+    $html->render();
+})->name('cagnotte.participation');
+
+$app->get('/cagnotte/gestion/:url', function($url) {
+    $app = \Slim\Slim::getInstance();
+    $vue = new \giftbox\view\PanierView($app, $url);
+    $html = new \giftbox\view\htmlView($vue->render('cagnotteParticipation'));
+    $html->render();
+})->name('cagnotte.gestion');
+
 $app->get('/note/:id/:note', function($id, $note){
     $app = \Slim\Slim::getInstance();
     $vue = new \giftbox\view\PrestaView($app, [$id, $note]);
