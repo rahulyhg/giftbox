@@ -14,7 +14,7 @@ require 'vendor/autoload.php';
 $app = new \Slim\Slim();
 
 $app->add(new \Slim\Middleware\SessionCookie(array(
-    'expires' => '20 minutes',
+    'expires' => '60 minutes',
     'path' => '/',
     'domain' => null,
     'secure' => false,
@@ -89,7 +89,6 @@ $app->get('/panier', function() {
 	$html->render();
 })->name('panier');
 
-
 $app->get('/panier/informations', function() {
 	$app = \Slim\Slim::getInstance();
 	$vue = new \giftbox\view\PanierView($app);
@@ -104,12 +103,19 @@ $app->post('/panier/validation', function() {
 	$html->render();
 })->name('validation');
 
-$app->get('/panier/save', function() {
+$app->get('/paiement', function() {
 	$app = \Slim\Slim::getInstance();
 	$vue = new \giftbox\view\PanierView($app);
-	$html = new \giftbox\view\htmlView($vue->render('save'));
+	$html = new \giftbox\view\htmlView($vue->render('paiementForm'));
 	$html->render();
-})->name('save');
+})->name('paiement.form');
+
+$app->post('/paiement/validation', function() {
+    $app = \Slim\Slim::getInstance();
+    $vue = new \giftbox\view\PanierView($app);
+    $html = new \giftbox\view\htmlView($vue->render('paiementValidation'));
+    $html->render();
+})->name('paiement.validation');
 
 $app->get('/coffret/edit/:url', function($url){
     $app = \Slim\Slim::getInstance();

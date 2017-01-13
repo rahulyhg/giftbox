@@ -134,25 +134,26 @@ class PanierView
         if (isset($_SESSION['panier'])) {
             if (count($_SESSION['panier']['article']) >= 2) {
                 $formulaire = '<form id="formulaire" action="' . $this->app->urlFor('validation') . '" method="post">';
-                $formulaire .= '<label for="nom">Nom : </label>';
+                $formulaire .= '<label for="nom">Nom : *</label>';
                 $formulaire .= '<input type="text" name="nom"id="nom" placeholder="Nom" required>';
-                $formulaire .= '<label for="prenom">Prénom : </label>';
+                $formulaire .= '<label for="prenom">Prénom : *</label>';
                 $formulaire .= '<input type="text" name="prenom" id="prenom" placeholder="Prénom" required>';
-                $formulaire .= '<label for="email">Email : </label>';
+                $formulaire .= '<label for="email">Email : *</label>';
                 $formulaire .= '<input type="email" name="email" id="email" placeholder="Email" required>';
-                $formulaire .= '<label for="message">Message : </label>';
+                $formulaire .= '<label for="message">Message : *</label>';
                 $formulaire .= '<textarea name="message" id="message" cols="50" rows="5" required></textarea>';
                 $formulaire .= '<label for="password">Mot de passe : </label>';
-                $formulaire .= '<input type="password" name="password" id="password" placeholder="Mot de passe" required>';
+                $formulaire .= '<input type="password" name="password" id="password" placeholder="Mot de passe">';
                 $formulaire .= '<label for="password_repeat">Mot de passe (Vérif.) : </label>';
-                $formulaire .= '<input type="password" name="password_repeat" id="password_repeat" placeholder="Mot de passe (Vérif.)" required>';
-                $formulaire .= '<label for="paiement">Mode de paiement : </label>';
+                $formulaire .= '<input type="password" name="password_repeat" id="password_repeat" placeholder="Mot de passe (Vérif.)">';
+                $formulaire .= '<label for="paiement">Mode de paiement : *</label>';
                 $formulaire .= '<select name="paiement">';
                 $formulaire .= '<option value="classique">Classique</value>';
                 $formulaire .= '<option value="cagnotte">Cagnotte</value>';
                 $formulaire .= '</select>';
                 $formulaire .= '<button>Valider</button>';
                 $formulaire .= '</form>';
+                $formulaire .= '<p>* Champs obligatoires.</p>';
                 return $formulaire;
             } else {
                 $this->app->flash('info', 'Il vous faut au moins une prestation de deux catégories différentes.');
@@ -169,6 +170,10 @@ class PanierView
 		$contenu = '';
 		$errorsMessage = '';
 		$data = $this->app->request->post();
+        $password = filter_var($data['password'], FILTER_SANITIZE_STRING);
+        $password_repeat = filter_var($data['password_repeat'], FILTER_SANITIZE_STRING);
+        unset($data['password']);
+        unset($data['password_repeat']);
 		if (!is_null($data)) {
             foreach ($data as $k => $v) {
                 if (!empty($v)) {
@@ -183,8 +188,10 @@ class PanierView
                 }
             }
 
-            if (strcmp($data['password'], $data['password_repeat']) != 0) {
-                $errors[] = 'Les mots de passes ne correspondent pas.';
+            if (!empty($password)) {
+                if (strcmp($password, $password_repeat) != 0) {
+                    $errors[] = 'Les mots de passes ne correspondent pas.';
+                }
             }
         } else {
             $this->app->flash('error', 'Erreur dans le formulaire');
@@ -202,11 +209,15 @@ class PanierView
             $this->app->response->redirect($this->app->urlFor('informations'), 200);
 		} else {
 			$uri = $this->app->request->getRootUri();
-            $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT, ['cost' => 10]);
+            if (!empty($password)) {
+                $data['password'] = password_hash($password, PASSWORD_DEFAULT, ['cost' => 10]);
+            } else {
+                $data['password'] = '';
+            }
 			$data['url'] = uniqid();
 			$data['urlGestion'] = uniqid();
-			$data['statut'] = "transmise au destinataire";
-			$data['montant'] = 0;
+			$data['statut'] = 'payé';
+            $data['montant'] = 0;
 			
 			foreach ($_SESSION['panier']['article'] as $article => $a) {
 				$data['montant'] += ($a['qua'] * $a['prix']);
@@ -214,33 +225,91 @@ class PanierView
 			$contenu .= '<p><u>Mode de paiement :</u> ' . $data['paiement'] . '</p>';
 			$contenu .= $this->render('recapitulatif');
 			$_SESSION['coffret'] = $data;
-			$contenu .= '<p><a href="' . $this->app->urlFor('save') . '">Sauvegarder le coffret</a></p>';
+			$contenu .= '<p><a href="' . $this->app->urlFor('paiement.form') . '">Sauvegarder le coffret</a></p>';
 		}
 		return $contenu;
 	}
 
-	private function save() {
-		if (isset($_SESSION['coffret'])) {
-			$coffret = Coffret::create($_SESSION['coffret']);
-            $coffret_id = $coffret->id;
-            foreach ($_SESSION['panier']['article'] as $article => $a) {
-                CoffretContenu::create(
-                    array(
-                        'coffret_id' => $coffret_id,
-                        'prestation_id' => $a['id'],
-                        'qua' => $a['qua']
-                    )
-                );
-            }
-            $urlCoffret = 'URL Coffret : http://' . $_SERVER['HTTP_HOST']. $this->app->urlFor('coffret', ['url' => $coffret->url]);
-            $urlGestionCoffret = 'URL Coffret gestion : http://'. $_SERVER['HTTP_HOST'] . $this->app->urlFor('coffret_ges', ['url' => $coffret->urlGestion]);
-            unset($_SESSION['panier']);
-			unset($_SESSION['coffret']);
-            $this->app->flash('success', '<p>Coffret sauvegardé avec succès</p><p>' . $urlCoffret . '</p><p>' . $urlGestionCoffret . '</p>');
+    private function paiementForm() {
+        if (isset($_SESSION['coffret'])) {
+            $formulaire = '<form id="paiementForm" action="' . $this->app->urlFor('paiement.validation') . '" method="post">';
+            $formulaire .= '<label for="code">Code (max : 12) : *</label>';
+            $formulaire .= '<input type="text" name="code" id="code" placeholder="Code" maxlength="12" required>';
+            $formulaire .= '<label for="date">Date de validté (MM/AA) (max : 5) : *</label>';
+            $formulaire .= '<input type="text" name="date" id="date" placeholder="AA/MM" maxlength="5" required>';
+            $formulaire .= '<label for="codesecu">Code de sécurité (max : 3) : *</label>';
+            $formulaire .= '<input type="text" name="codesecu" id="codesecu" placeholder="111" maxlength="3" required>';
+            $formulaire .= '<button>Valider</button>';
+            $formulaire .= '</form>';
+            $formulaire .= '<p>* Champs obligatoires.</p>';
+            return $formulaire;
+        } else {
             $this->app->response->redirect($this->app->urlFor('index'), 200);
-		}
-		return null;
-	}
+        }
+    }
+
+	private function paiementValidation() {
+	    if (isset($_SESSION['coffret'])) {
+            $errors = array();
+            $contenu = '';
+            $errorsMessage = '';
+            $data = $this->app->request->post();
+            if (!is_null($data)) {
+                foreach ($data as $k => $v) {
+                    if (!empty($v)) {
+                        $data[$k] = filter_var($v, FILTER_SANITIZE_STRING);
+                        if ($k === 'date') {
+                            if (!preg_match("/[0-9]{2}\/[0-9]{2}/", $v)) {
+                                $errors[] = 'Date de validté incorrecte.';
+                            }
+                        }
+                    } else {
+                        $errors[] = ucfirst($k) .' incorrect.';
+                    }
+                }
+
+                if (!empty($errors)) {
+                    $errorsMessage .= '<ul>';
+                    $errorsMessage .= 'Whoops, des erreurs ont été rencontrées :';
+                    foreach ($errors as $error) {
+                        $errorsMessage .= '<li>' . $error . '</li>';
+                    }
+                    $errorsMessage .= '</ul>';
+                    $this->app->flash('error', $errorsMessage);
+                    $this->app->response->redirect($this->app->urlFor('paiement.form'), 200);
+                } else {
+                    $coffret = Coffret::create($_SESSION['coffret']);
+                    $coffret_id = $coffret->id;
+                    foreach ($_SESSION['panier']['article'] as $article => $a) {
+                        CoffretContenu::create(
+                            array(
+                                'coffret_id' => $coffret_id,
+                                'prestation_id' => $a['id'],
+                                'qua' => $a['qua'],
+                            )
+                        );
+                    }
+                    $urlCoffret = 'URL Coffret : http://' . $_SERVER['HTTP_HOST']. $this->app->urlFor('coffret', ['url' => $coffret->url]);
+                    $gestion = '';
+                    if (isset($_SESSION['coffret']['password'])) {
+                        if ($_SESSION['coffret']['password'] != '') {
+                            $gestion = '<p>URL Coffret gestion : http://'. $_SERVER['HTTP_HOST'] . $this->app->urlFor('coffret_ges', ['url' => $coffret->urlGestion]) . '</p>';
+                        }
+                    }
+                    //unset($_SESSION['panier']);
+                    //unset($_SESSION['coffret']);
+                    $this->app->flash('success', '<p>Coffret sauvegardé avec succès</p><p>' . $urlCoffret . '</p>' . $gestion);
+                    $this->app->response->redirect($this->app->urlFor('index'), 200);
+                }
+            } else {
+                $this->app->flash('error', 'Erreur dans le formulaire');
+                $this->app->response->redirect($this->app->urlFor('paiement.form'), 200);
+            }
+        } else {
+            $this->app->response->redirect($this->app->urlFor('index'), 200);
+        }
+	    return null;
+    }
 
 	public function render($v) {
 		switch ($v) {
@@ -265,9 +334,17 @@ class PanierView
 				$content = $this->validation();
 				break;
 
-			case 'recapitulatif':
-				$content = $this->panier('recap');
-				break;
+            case 'recapitulatif':
+                $content = $this->panier('recap');
+                break;
+
+            case 'paiementForm':
+                $content = $this->paiementForm();
+                break;
+
+            case 'paiementValidation':
+                $content = $this->paiementValidation();
+                break;
 
 			case 'save':
 				$content = $this->save();

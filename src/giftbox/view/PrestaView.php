@@ -42,7 +42,7 @@ class PrestaView
 				$moyenne = 'Pas de note(s)';
 			}
 			$categorie = $d->categorie()->first()->nom;
-			$contenu .= '<h2><u>Prestation</u> : ' . $d->nom . '</h2>';
+			$contenu .= '<h2><u>Prestation</u> : <a href="' . $this->app->urlFor('prestation', ['id' => $d->id]) . '">' . $d->nom . '</a></h2>';
 			$contenu .= '<p><img class="prestaImg" src="' . $uri . '/web/img/' . $d->img . '"></p>';
 			$contenu .= '<h3><u>Categorie</u> : <a href="' . $this->app->urlFor('categories.order', ['categorie'=>$d['cat_id'],'order' => 'asc']) . '">' . $categorie . '</a></h3>';
 			$contenu .= '<p>' . $d->descr . '</p>';
@@ -127,9 +127,12 @@ class PrestaView
 		usort($prestations, function($a, $b) { return ($a['moyenne'] < $b['moyenne']); });
 		foreach ($prestations as $prestation => $p) {
 			$uri = $this->app->request->getRootUri();
+            $categorie = $p['prestation']->categorie()->first()->nom;
 			$contenu .= '<hr />';
-			$contenu .= '<h2><u>Prestation</u> : ' . $p['prestation']->nom . '</h2>';
-			$contenu .= '<p>' . $p['prestation']->descr . '</p>';
+            $contenu .= '<h2><u>Prestation</u> : <a href="' . $this->app->urlFor('prestation', ['id' => $p['prestation']->id]) . '">' . $p['prestation']->nom . '</a></h2>';
+            $contenu .= '<p><img class="prestaImg" src="' . $uri . '/web/img/' . $p['prestation']->img . '"></p>';
+            $contenu .= '<h3><u>Categorie</u> : <a href="' . $this->app->urlFor('categories.order', ['categorie' => $p['prestation']->cat_id, 'order' => 'asc']) . '">' . $categorie . '</a></h3>';
+            $contenu .= '<p>' . $p['prestation']->descr . '</p>';
 			$contenu .= '<p><u>Prix</u> : ' . $p['prestation']->prix . '</p>';
 			$contenu .= '<p><u>Note</u> : ' . $p['moyenne'] . '/5</p>';
 			$contenu .= '<a href="' . $this->app->urlFor('ajouter', ['id' => $p['prestation']->id]) . '"><img src="' . $uri . '/web/img/add.png" width="32" alt="Ajouter"></a>';
