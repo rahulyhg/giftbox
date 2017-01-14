@@ -133,6 +133,21 @@ $app->get('/coffret/:url', function($url){
     $html->render();
 })->name('coffret');
 
+$app->get('/coffret/disconnect/true', function(){
+    $app = \Slim\Slim::getInstance();
+    $vue = new \giftbox\view\CoffretView($app);
+    $html = new giftbox\view\htmlView($vue->render('disconnect'));
+    $html->render();
+})->name('coffret_disconnect');
+
+$app->post('/coffret/edit/connect/:url', function($url){
+    $app = \Slim\Slim::getInstance();
+    $coffret = \giftbox\models\Coffret::where('urlGestion', '=', $url)->first();
+    $vue = new \giftbox\view\CoffretView($app, [$coffret]);
+    $html = new \giftbox\view\htmlView($vue->render('connect'));
+    $html->render();
+})->name('coffret_connect');
+
 $app->get('/cagnotte', function() {
     $app = \Slim\Slim::getInstance();
     $vue = new \giftbox\view\PanierView($app);
