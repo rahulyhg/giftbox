@@ -27,9 +27,15 @@ class PrestaView
 
 	private function listePrestations(){
 		$uri = $this->app->request->getRootUri();
-		$contenu = '<a href="' . $this->app->urlFor('prestations', ['order' => 'asc']) . '">croissant</a>&nbsp;&nbsp;';
-		$contenu .= '<a href="' . $this->app->urlFor('prestations', ['order' => 'desc']) . '">decroissant</a>';
-		foreach ($this->data as $d){
+		$order = $this->data[1];
+		$contenu = '<div class="form-group">';
+		$contenu .= '<label for="trix">Trix :</label>';
+		$contenu .= '<select class="form-control" onchange="this.options[this.selectedIndex].value && (window.location = this.options[this.selectedIndex].value);" value="">';
+		$contenu .= '<option value="' . $this->app->urlFor('prestations', ['order' => 'asc']) . '" ' . (($order == 'asc') ? 'selected' : '') . '>Prix croissant</option>';
+		$contenu .= '<option value="' . $this->app->urlFor('prestations', ['order' => 'desc']) . '" ' . (($order == 'desc') ? 'selected' : '') . '>Prix décroissant</option>';
+		$contenu .= '</select>';
+		$contenu .= '</div>';
+		foreach ($this->data[0] as $d){
 			$notes = Note::where('prestationId', '=', $d->id)->get(array('note'));
 			$notesTotal = 0;
 			$moyenne = 0;
@@ -37,20 +43,23 @@ class PrestaView
 				foreach ($notes as $note => $n) {
 					$notesTotal = ($notesTotal + $n->note);
 				}
-				$moyenne = round(($notesTotal / $d->votes), 2) . '/5';
+				$moyenne = round(($notesTotal / $d->votes), 2) . ' / 5';
 			} else {
 				$moyenne = 'Pas de note(s)';
 			}
 			$categorie = $d->categorie()->first()->nom;
-			$contenu .= '<h2><u>Prestation</u> : <a href="' . $this->app->urlFor('prestation', ['id' => $d->id]) . '">' . $d->nom . '</a></h2>';
-			$contenu .= '<p><img class="prestaImg" src="' . $uri . '/web/img/' . $d->img . '"></p>';
-			$contenu .= '<h3><u>Categorie</u> : <a href="' . $this->app->urlFor('categories.order', ['categorie'=>$d['cat_id'],'order' => 'asc']) . '">' . $categorie . '</a></h3>';
-			$contenu .= '<p>' . $d->descr . '</p>';
-			$contenu .= '<p><u>Prix</u> : ' . $d->prix . '</p>';
-			$contenu .= '<p><u>Note</u> : ' . $moyenne . '</p>';
-			$contenu .= '<a href="' . $this->app->urlFor('ajouter', ['id' => $d->id]) . '"><img src="' . $uri . '/web/img/add.png" width="32" alt="Ajouter"></a>';
-			$contenu .= '<p><u>Noter :</u></p>';
-			$contenu .= '<div class="notation">';
+			$contenu .= '<div class="col-sm-6 col-md-4">';
+			$contenu .= '<div class="thumbnail">';
+			$contenu .= '<img src="' . $uri . '/web/img/' . $d->img . '" alt="' . $d->nom . '">';
+			$contenu .= '<div class="caption">';
+			$contenu .= '<h4>';
+			$contenu .= '<a href="' . $this->app->urlFor('prestation', ['id' => $d->id]) . '">' . $d->nom . '</a>';
+			$contenu .= '&nbsp;<span class="label label-primary">' . $moyenne . '</span>';
+			$contenu .= '</h4>';
+			$contenu .= '<h5><a href="' . $this->app->urlFor('categories.order', ['categorie' => $d->cat_id, 'order' => 'asc']) . '"><span class="label label-default">' . $categorie . '</span></a></h5>';
+			$contenu .= '<h5>' . $d->descr . '</h5>';
+			$contenu .= '<p><a href="' . $this->app->urlFor('ajouter', ['id' => $d->id]) . '" title="Ajouter au panier" class="btn btn-warning" role="button"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> ' . $d->prix . ' &euro;</a></p>';
+			$contenu .= '<p><div class="notation">';
 			$contenu .= '<div class="stars">';
 			$contenu .= '<a href="' . $this->app->urlFor('notation', ['id' => $d->id, 'note' => 5]) . '" title="5 &eacute;toiles">&star;</a>';
 			$contenu .= '<a href="' . $this->app->urlFor('notation', ['id' => $d->id, 'note' => 4]) . '" title="4 &eacute;toiles">&star;</a>';
@@ -58,11 +67,14 @@ class PrestaView
 			$contenu .= '<a href="' . $this->app->urlFor('notation', ['id' => $d->id, 'note' => 2]) . '" title="2 &eacute;toiles">&star;</a>';
 			$contenu .= '<a href="' . $this->app->urlFor('notation', ['id' => $d->id, 'note' => 1]) . '" title="1 &eacute;toile">&star;</a>';
 			$contenu .= '</div>';
+			$contenu .= '</div></p>';
 			$contenu .= '</div>';
-			$contenu .= '<p><a href="' . $this->app->urlFor('prestation', ['id' => $d->id]) . '">Voir plus &rarr;</a></p>';
+			$contenu .= '</div>';
+			$contenu .= '</div>';
 		}
 		return $contenu;
 	}
+
 	private function prestation(){
 		$uri = $this->app->request->getRootUri();
 		$notes = Note::where('prestationId', '=', $this->data[0]->id)->get(array('note'));
@@ -72,17 +84,24 @@ class PrestaView
 			foreach ($notes as $note => $n) {
 				$notesTotal = ($notesTotal + $n->note);
 			}
-			$moyenne = round(($notesTotal / $this->data[0]->votes), 2) . '/5';
+			$moyenne = round(($notesTotal / $this->data[0]->votes), 2) . ' / 5';
 		} else {
 			$moyenne = 'Pas de note(s)';
 		}
-		$contenu = '<h2><u>Prestation</u> : ' . $this->data[0]->nom . '</h2>';
+
+		$categorie = Categorie::where('id', '=', $this->data[0]->cat_id)->first();
+		$contenu = '<div class="page-header">';
+		$contenu .= '<h1>' . $this->data[0]->nom . ' <a href="' . $this->app->urlFor('categories.order', ['categorie' => $this->data[0]->cat_id, 'order' => 'asc']) . '"><span class="label label-default">' . $categorie->nom . '</span></a></h1>';
+		$contenu .= '</div>';
+		$contenu .= '<p><a href="' . $this->app->urlFor('prestations', ['order' => 'asc']) . '" class="btn btn-primary">&larr; Liste des prestations</a></p>';
+		$contenu .= '<div class="thumbnail">';
+		$contenu .= '<img src="' . $uri . '/web/img/' . $this->data[0]->img . '" alt="' . $this->data[0]->nom . '">';
+		$contenu .= '</div>';
 		$contenu .= '<p>' . $this->data[0]->descr . '</p>';
-		$contenu .= '<p><u>Prix</u> : ' . $this->data[0]->prix . '</p>';
-		$contenu .= '<p><u>Note</u> : ' . $moyenne . '</p>';
-		$contenu .= '<a href="' . $this->app->urlFor('ajouter', ['id' => $this->data[0]->id]) . '"><img src="' . $uri . '/web/img/add.png" width="32" alt="Ajouter"></a>';
-		$contenu .= '<p><u>Noter :</u></p>';
-		$contenu .= '<div class="notation">';
+		$contenu .= '<p><u>Prix</u> : ' . $this->data[0]->prix . ' &euro;</p>';
+		$contenu .= '<p><u>Note</u> : <span class="label label-warning">' . $moyenne . '</span></p>';
+		$contenu .= '<p><a href="' . $this->app->urlFor('ajouter', ['id' => $this->data[0]->id]) . '" title="Ajouter au panier" class="btn btn-primary" role="button"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> ' . $this->data[0]->prix . ' &euro;</a></p>';
+		$contenu .= '<p><div class="notation">';
 		$contenu .= '<div class="stars">';
 		$contenu .= '<a href="' . $this->app->urlFor('notation', ['id' => $this->data[0]->id, 'note' => 5]) . '" title="5 &eacute;toiles">&star;</a>';
 		$contenu .= '<a href="' . $this->app->urlFor('notation', ['id' => $this->data[0]->id, 'note' => 4]) . '" title="4 &eacute;toiles">&star;</a>';
@@ -90,8 +109,7 @@ class PrestaView
 		$contenu .= '<a href="' . $this->app->urlFor('notation', ['id' => $this->data[0]->id, 'note' => 2]) . '" title="2 &eacute;toiles">&star;</a>';
 		$contenu .= '<a href="' . $this->app->urlFor('notation', ['id' => $this->data[0]->id, 'note' => 1]) . '" title="1 &eacute;toile">&star;</a>';
 		$contenu .= '</div>';
-		$contenu .= '</div>';
-		$contenu .= '<p><a href="' . $this->app->urlFor('prestations', ['order' => 'asc']) . '">Liste des prestations</a></p>';
+		$contenu .= '</div></p>';
 		return $contenu;
 	}
 
@@ -106,6 +124,7 @@ class PrestaView
 
 		$this->app->flash('success', 'Merci d\'avoir not&eacute; cette prestation.');
 		$this->app->response->redirect($this->app->urlFor('index'), 200);
+		return null;
 	}
 
 	private function index() {
@@ -141,7 +160,7 @@ class PrestaView
 			$contenu .= '</h4>';
 			$contenu .= '<h5><a href="' . $this->app->urlFor('categories.order', ['categorie' => $p['prestation']->cat_id, 'order' => 'asc']) . '"><span class="label label-default">' . $categorie . '</span></a></h5>';
 			$contenu .= '<h5>' . $p['prestation']->descr . '</h5>';
-			$contenu .= '<p><a href="' . $this->app->urlFor('ajouter', ['id' => $p['prestation']->id]) . '" title="Ajouter au panier" class="btn btn-primary" role="button"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> ' . $p['prestation']->prix . ' &euro;</a></p>';
+			$contenu .= '<p><a href="' . $this->app->urlFor('ajouter', ['id' => $p['prestation']->id]) . '" title="Ajouter au panier" class="btn btn-warning" role="button"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> ' . $p['prestation']->prix . ' &euro;</a></p>';
 			$contenu .= '<p><div class="notation">';
 			$contenu .= '<div class="stars">';
 			$contenu .= '<a href="' . $this->app->urlFor('notation', ['id' => $p['prestation']->id, 'note' => 5]) . '" title="5 &eacute;toiles">&star;</a>';
