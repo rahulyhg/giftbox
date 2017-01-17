@@ -44,16 +44,16 @@ th, td {
 label, button, input, select {
 	display: block;
 	width: 150px;
+
+.thumbnail img {
+	height: 200px;
+
 }
 
 .notation {
 	text-align: left;
 	width: 100px;
 	height: 35px;
-}
-
-.notation .stars {
-	text-align: left;
 }
 
 .notation .stars a {

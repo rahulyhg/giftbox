@@ -8,11 +8,14 @@
  */
 
 $directory = \Slim\Slim::getInstance()->urlFor('index');
+$ressourceUri = \Slim\Slim::getInstance()->request->getResourceUri();
 $flash = \Slim\Slim::getInstance()->flashData();
 $flashMessage = '';
 if ($flash != null) {
 	$alertType = array_keys($flash)[0];
-	$flashMessage = '<div class="alert alert-' . $alertType . '">' . $flash[$alertType] . '</div>';
+	$flashMessage .= '<div class="col-md-12">';
+	$flashMessage .= '<div class="alert alert-' . $alertType . '">' . $flash[$alertType] . '</div>';
+	$flashMessage .= '</div>';
 }
 echo '
 <!DOCTYPE html>
@@ -28,6 +31,7 @@ echo '
 	<link href="' . $directory . 'web/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
 	<link href="' . $directory . 'web/css/offcanvas.css" rel="stylesheet">
 	<script src="' . $directory . 'web/js/ie-emulation-modes-warning.js"></script>
+	<link href="' . $directory . 'web/css/style.css" rel="stylesheet">
 	<!--[if lt IE 9]>
 	  <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 	  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
@@ -44,14 +48,21 @@ echo '
 			<span class="icon-bar"></span>
 			<span class="icon-bar"></span>
 		  </button>
-		  <a class="navbar-brand" href="#">Project name</a>
+		  <a class="navbar-brand" href="' . $directory . '">Giftbox</a>
 		</div>
 		<div id="navbar" class="collapse navbar-collapse">
 		  <ul class="nav navbar-nav">
-			<li class="active"><a href="' . $directory . '">Accueil</a></li>
-			<li><a href="' . $directory . 'prestations/all/asc">Prestations</a></li>
-			<li><a href="' . $directory . 'categories">Catégories</a></li>
-			<li><a href="' . $directory . 'administration">Administration</a>' . (isset($_SESSION['admin']) ? '&nbsp;|&nbsp;<a href="' . $directory . '/deconnexion">Se deconnecter</a>' : '') . '</li>
+			<li' . (($ressourceUri == '/' || empty($ressourceUri)) ? ' class="active"' : '') . '><a href="' . $directory . '">Accueil</a></li>
+			<li' . (strstr($ressourceUri, "prestations", true) ? ' class="active"' : '') . '><a href="' . $directory . 'prestations/all/asc">Prestations</a></li>
+			<li' . (strstr($ressourceUri, "categories", true) ? ' class="active"' : '') . '><a href="' . $directory . 'categories">Catégories</a></li>
+			<li' . (strstr($ressourceUri, "administration", true) ? ' class="active"' : '') . '><a href="' . $directory . 'administration">Administration</a></li>
+			' . (isset($_SESSION['admin']) ? '<li><a href="' . $directory . 'administration/deconnexion">Se deconnecter</a></li>' : '') . '
+		  </ul>
+		  <ul class="nav navbar-nav navbar-right">
+		  	<a href="' . $directory . 'panier" class="btn btn-warning navbar-btn">
+		  		<span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span>
+		  		' . (isset($_SESSION['panier']) ? $_SESSION['panier']['qua'] : 0) . '
+		  	</a>
 		  </ul>
 		</div>
 	  </div>
@@ -61,13 +72,15 @@ echo '
 
 	  <div class="row row-offcanvas row-offcanvas-right">
 
-		<div class="col-xs-12 col-sm-9">
+		<div class="col-md-12">
 		  <p class="pull-right visible-xs">
 			<button type="button" class="btn btn-primary btn-xs" data-toggle="offcanvas">Toggle nav</button>
 		  </p>
 		  <div class="row">
-			' . $flashMessage . '
-			' . $content . '
+		  	<div class="col-md-12">
+			  	' . $flashMessage . '
+				' . $content . '
+		  	</div>
 		  </div>
 		</div>
 	  </div>
@@ -75,7 +88,8 @@ echo '
 	  <hr>
 
 	  <footer>
-		<p>&copy; 2017 IUT Nancy-Charlemagne, Département Informatique.</p>
+		<p>&copy; 2017 IUT Nancy-Charlemagne | Département Informatique.</p>
+		<p>Made with &hearts; by BOURRELY Thomas &amp; WILMOUTH Steven</p>
 	  </footer>
 
 	</div>
