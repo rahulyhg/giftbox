@@ -54,7 +54,7 @@ class CoffretView
                 $contenu.="</tbody>";
                 $contenu.="</table>";
                 $contenu.= "<h2>Statut du coffret : " . $coffret->statut . "</h2>";
-                $contenu.= '<a href="'.$this->app->urlFor('coffret_disconnect').'">deconnexion</a>';
+                $contenu.= '<p><a href="'.$this->app->urlFor('coffret_disconnect').'">deconnexion</a></p>';
             }
         }else{
             $contenu .= '<form action="' . $this->app->urlFor('coffret_connect', ["url"=>$this->data[0]->urlGestion]) . '" method="post">';

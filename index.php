@@ -14,15 +14,15 @@ require 'vendor/autoload.php';
 $app = new \Slim\Slim();
 
 $app->add(new \Slim\Middleware\SessionCookie(array(
-    'expires' => '60 minutes',
-    'path' => '/',
-    'domain' => null,
-    'secure' => false,
-    'httponly' => false,
-    'name' => 'slim_session',
-    'secret' => 'CHANGE_ME',
-    'cipher' => MCRYPT_RIJNDAEL_256,
-    'cipher_mode' => MCRYPT_MODE_CBC
+	'expires' => '60 minutes',
+	'path' => '/',
+	'domain' => null,
+	'secure' => false,
+	'httponly' => false,
+	'name' => 'slim_session',
+	'secret' => 'CHANGE_ME',
+	'cipher' => MCRYPT_RIJNDAEL_256,
+	'cipher_mode' => MCRYPT_MODE_CBC
 )));
 
 $app->get('/',function(){
@@ -39,7 +39,7 @@ $app->get('/prestations/all/:order', function($order){
 	}else{
 		$liste = \giftbox\models\Prestation::where('visible', '=', 1)->get()->sortBy('prix');
 	}
-    $vue = new \giftbox\view\PrestaView($app, $liste);
+	$vue = new \giftbox\view\PrestaView($app, $liste);
 	$html = new \giftbox\view\htmlView($vue->render(1));
 	$html->render();
 })->name('prestations');
@@ -111,150 +111,164 @@ $app->get('/paiement', function() {
 })->name('paiement.form');
 
 $app->post('/paiement/validation', function() {
-    $app = \Slim\Slim::getInstance();
-    $vue = new \giftbox\view\PanierView($app);
-    $html = new \giftbox\view\htmlView($vue->render('paiementValidation'));
-    $html->render();
+	$app = \Slim\Slim::getInstance();
+	$vue = new \giftbox\view\PanierView($app);
+	$html = new \giftbox\view\htmlView($vue->render('paiementValidation'));
+	$html->render();
 })->name('paiement.validation');
 
 $app->get('/coffret/edit/:url', function($url){
-    $app = \Slim\Slim::getInstance();
-    $coffret = \giftbox\models\Coffret::where('urlGestion', '=', $url)->first();
-    $vue = new \giftbox\view\CoffretView($app, [$coffret]);
-    $html = new giftbox\view\htmlView($vue->render('gestion_coffret'));
-    $html->render();
+	$app = \Slim\Slim::getInstance();
+	$coffret = \giftbox\models\Coffret::where('urlGestion', '=', $url)->first();
+	$vue = new \giftbox\view\CoffretView($app, [$coffret]);
+	$html = new giftbox\view\htmlView($vue->render('gestion_coffret'));
+	$html->render();
 })->name('coffret_ges');
 
 $app->get('/coffret/:url', function($url){
-    $app = \Slim\Slim::getInstance();
-    $coffret = \giftbox\models\Coffret::where('url', '=', $url)->first();
-    $vue = new \giftbox\view\CoffretView($app, [$coffret]);
-    $html = new giftbox\view\htmlView($vue->render('coffret'));
-    $html->render();
+	$app = \Slim\Slim::getInstance();
+	$coffret = \giftbox\models\Coffret::where('url', '=', $url)->first();
+	$vue = new \giftbox\view\CoffretView($app, [$coffret]);
+	$html = new giftbox\view\htmlView($vue->render('coffret'));
+	$html->render();
 })->name('coffret');
 
 $app->get('/coffret/disconnect/true', function(){
-    $app = \Slim\Slim::getInstance();
-    $vue = new \giftbox\view\CoffretView($app);
-    $html = new giftbox\view\htmlView($vue->render('disconnect'));
-    $html->render();
+	$app = \Slim\Slim::getInstance();
+	$vue = new \giftbox\view\CoffretView($app);
+	$html = new giftbox\view\htmlView($vue->render('disconnect'));
+	$html->render();
 })->name('coffret_disconnect');
 
 $app->post('/coffret/edit/connect/:url', function($url){
-    $app = \Slim\Slim::getInstance();
-    $coffret = \giftbox\models\Coffret::where('urlGestion', '=', $url)->first();
-    $vue = new \giftbox\view\CoffretView($app, [$coffret]);
-    $html = new \giftbox\view\htmlView($vue->render('connect'));
-    $html->render();
+	$app = \Slim\Slim::getInstance();
+	$coffret = \giftbox\models\Coffret::where('urlGestion', '=', $url)->first();
+	$vue = new \giftbox\view\CoffretView($app, [$coffret]);
+	$html = new \giftbox\view\htmlView($vue->render('connect'));
+	$html->render();
 })->name('coffret_connect');
 
 $app->get('/coffret/edit/add/:idPresta/:urlGestion', function($idPresta, $urlGestion){
-    $app = \Slim\Slim::getInstance();
-    $prestation = \giftbox\models\Prestation::where('id', '=', $idPresta)->first();
-    $data = [$prestation, $urlGestion];
-    $vue = new \giftbox\view\CoffretView($app, $data);
-    $html = new \giftbox\view\htmlView($vue->render('add'));
-    $html->render();
+	$app = \Slim\Slim::getInstance();
+	$prestation = \giftbox\models\Prestation::where('id', '=', $idPresta)->first();
+	$data = [$prestation, $urlGestion];
+	$vue = new \giftbox\view\CoffretView($app, $data);
+	$html = new \giftbox\view\htmlView($vue->render('add'));
+	$html->render();
 })->name('coffret.ajouter');
 
 $app->get('/coffret/edit/del/:idPresta/:urlGestion', function($idPresta, $urlGestion){
-    $app = \Slim\Slim::getInstance();
-    $prestation = \giftbox\models\Prestation::where('id', '=', $idPresta)->first();
-    $data = [$prestation, $urlGestion];
-    $vue = new \giftbox\view\CoffretView($app, $data);
-    $html = new \giftbox\view\htmlView($vue->render('del'));
-    $html->render();
+	$app = \Slim\Slim::getInstance();
+	$prestation = \giftbox\models\Prestation::where('id', '=', $idPresta)->first();
+	$data = [$prestation, $urlGestion];
+	$vue = new \giftbox\view\CoffretView($app, $data);
+	$html = new \giftbox\view\htmlView($vue->render('del'));
+	$html->render();
 })->name('coffret.supprimer');
 
-$app->get('/cagnotte', function() {
-    $app = \Slim\Slim::getInstance();
-    $vue = new \giftbox\view\PanierView($app);
-    $html = new \giftbox\view\htmlView($vue->render('cagnotteCreation'));
-    $html->render();
-})->name('cagnotte.creation');
+$app->get('/cagnotte/cloturer/:url', function($url) {
+	$app = \Slim\Slim::getInstance();
+	$vue = new \giftbox\view\CagnotteView($app, $url);
+	$html = new \giftbox\view\htmlView($vue->render('cloturer'));
+	$html->render();
+})->name('cagnotte.cloturer');
 
-$app->get('/cagnotte/participation/:url', function($url) {
-    $app = \Slim\Slim::getInstance();
-    $vue = new \giftbox\view\PanierView($app, $url);
-    $html = new \giftbox\view\htmlView($vue->render('cagnotteParticipation'));
-    $html->render();
+$app->get('/cagnotte/connexion/:url', function($url) {
+	$app = \Slim\Slim::getInstance();
+	$vue = new \giftbox\view\CagnotteView($app, $url);
+	$html = new giftbox\view\htmlView($vue->render('connexionForm'));
+	$html->render();
+})->name('cagnotte.connexionForm');
+
+$app->post('/cagnotte/connexion/:url', function($url) {
+	$app = \Slim\Slim::getInstance();
+	$vue = new \giftbox\view\CagnotteView($app, $url);
+	$html = new \giftbox\view\htmlView($vue->render('connexion'));
+	$html->render();
+})->name('cagnotte.connexion');
+
+$app->get('/cagnotte/participer/:url', function($url) {
+	$app = \Slim\Slim::getInstance();
+	$vue = new \giftbox\view\CagnotteView($app, $url);
+	$html = new \giftbox\view\htmlView($vue->render('participer'));
+	$html->render();
 })->name('cagnotte.participation');
 
 $app->get('/cagnotte/gestion/:url', function($url) {
-    $app = \Slim\Slim::getInstance();
-    $vue = new \giftbox\view\PanierView($app, $url);
-    $html = new \giftbox\view\htmlView($vue->render('cagnotteParticipation'));
-    $html->render();
+	$app = \Slim\Slim::getInstance();
+	$vue = new \giftbox\view\CagnotteView($app, $url);
+	$html = new \giftbox\view\htmlView($vue->render('gestion'));
+	$html->render();
 })->name('cagnotte.gestion');
 
 $app->get('/note/:id/:note', function($id, $note){
-    $app = \Slim\Slim::getInstance();
-    $vue = new \giftbox\view\PrestaView($app, [$id, $note]);
-    $html = new giftbox\view\htmlView($vue->render('note'));
-    $html->render();
+	$app = \Slim\Slim::getInstance();
+	$vue = new \giftbox\view\PrestaView($app, [$id, $note]);
+	$html = new giftbox\view\htmlView($vue->render('note'));
+	$html->render();
 })->name('notation');
 
 $app->get('/administration', function(){
-    $app = \Slim\Slim::getInstance();
-    $vue = new \giftbox\view\AdministrationView($app);
-   	$html = new giftbox\view\htmlView($vue->render('index'));
-    $html->render();
+	$app = \Slim\Slim::getInstance();
+	$vue = new \giftbox\view\AdministrationView($app);
+	$html = new giftbox\view\htmlView($vue->render('index'));
+	$html->render();
 })->name('administration');
 
 $app->get('/administration/deconnexion', function(){
-    $app = \Slim\Slim::getInstance();
-    $vue = new \giftbox\view\AdministrationView($app);
-   	$html = new giftbox\view\htmlView($vue->render('deconnexion'));
-    $html->render();
+	$app = \Slim\Slim::getInstance();
+	$vue = new \giftbox\view\AdministrationView($app);
+	$html = new giftbox\view\htmlView($vue->render('deconnexion'));
+	$html->render();
 })->name('deconnexion');
 
 $app->post('/administration/connexion', function() {
 	$app = \Slim\Slim::getInstance();
-    $vue = new \giftbox\view\AdministrationView($app);
-    $html = new giftbox\view\htmlView($vue->render('connexion'));
-    $html->render();
+	$vue = new \giftbox\view\AdministrationView($app);
+	$html = new giftbox\view\htmlView($vue->render('connexion'));
+	$html->render();
 })->name('administration.connexion');
 
 $app->get('/administration/prestations', function(){
-    $app = \Slim\Slim::getInstance();
-    $vue = new \giftbox\view\AdministrationView($app);
-   	$html = new giftbox\view\adminView($vue->render('aprestations'));
-    $html->render();
+	$app = \Slim\Slim::getInstance();
+	$vue = new \giftbox\view\AdministrationView($app);
+	$html = new giftbox\view\adminView($vue->render('aprestations'));
+	$html->render();
 })->name('administration.prestations');
 
 $app->get('/administration/prestation/cacher/:id', function($id){
-    $app = \Slim\Slim::getInstance();
-    $vue = new \giftbox\view\AdministrationView($app, [$id]);
-   	$html = new giftbox\view\adminView($vue->render('cacher'));
-    $html->render();
+	$app = \Slim\Slim::getInstance();
+	$vue = new \giftbox\view\AdministrationView($app, [$id]);
+	$html = new giftbox\view\adminView($vue->render('cacher'));
+	$html->render();
 })->name('prestation.cacher');
 
 $app->get('/administration/prestation/afficher/:id', function($id){
-    $app = \Slim\Slim::getInstance();
-    $vue = new \giftbox\view\AdministrationView($app, [$id]);
-   	$html = new giftbox\view\adminView($vue->render('afficher'));
-    $html->render();
+	$app = \Slim\Slim::getInstance();
+	$vue = new \giftbox\view\AdministrationView($app, [$id]);
+	$html = new giftbox\view\adminView($vue->render('afficher'));
+	$html->render();
 })->name('prestation.afficher');
 
 $app->get('/administration/prestation/supprimer/:id', function($id){
-    $app = \Slim\Slim::getInstance();
-    $vue = new \giftbox\view\AdministrationView($app, [$id]);
-   	$html = new giftbox\view\adminView($vue->render('supprimer'));
-    $html->render();
+	$app = \Slim\Slim::getInstance();
+	$vue = new \giftbox\view\AdministrationView($app, [$id]);
+	$html = new giftbox\view\adminView($vue->render('supprimer'));
+	$html->render();
 })->name('prestation.supprimer');
 
 $app->get('/administration/prestation/ajouter', function(){
-    $app = \Slim\Slim::getInstance();
-    $vue = new \giftbox\view\AdministrationView($app);
-   	$html = new giftbox\view\adminView($vue->render('ajouter'));
-    $html->render();
+	$app = \Slim\Slim::getInstance();
+	$vue = new \giftbox\view\AdministrationView($app);
+	$html = new giftbox\view\adminView($vue->render('ajouter'));
+	$html->render();
 })->name('prestation.ajouter');
 
 $app->post('/administration/prestation/ajouts', function(){
-    $app = \Slim\Slim::getInstance();
-    $vue = new \giftbox\view\AdministrationView($app);
-   	$html = new giftbox\view\adminView($vue->render('ajouterPrestation'));
-    $html->render();
+	$app = \Slim\Slim::getInstance();
+	$vue = new \giftbox\view\AdministrationView($app);
+	$html = new giftbox\view\adminView($vue->render('ajouterPrestation'));
+	$html->render();
 })->name('administration.prestation.ajouter');
 
 

@@ -248,10 +248,8 @@ class PanierView
 
             $urlCoffret = 'URL Cagnotte : http://' . $_SERVER['HTTP_HOST']. $this->app->urlFor('cagnotte.participation', ['url' => $cagnotte['urlContribution']]);
             $gestion = '';
-            if (isset($_SESSION['coffret']['password'])) {
-                if ($_SESSION['coffret']['password'] != '') {
-                    $gestion = '<p>URL de gestion de la cagnotte : http://'. $_SERVER['HTTP_HOST'] . $this->app->urlFor('cagnotte.gestion', ['url' => $cagnotte['urlGestion']]) . '</p>';
-                }
+            if ($_SESSION['coffret']['password'] != '') {
+                $gestion = '<p>URL de gestion de la cagnotte : http://'. $_SERVER['HTTP_HOST'] . $this->app->urlFor('cagnotte.gestion', ['url' => $cagnotte['urlGestion']]) . '</p>';
             }
             $this->app->flash('success', '<p>Coffret sauvegardé avec succès</p><p>' . $urlCoffret . '</p>' . $gestion);
             $this->app->response->redirect($this->app->urlFor('index'), 200);

@@ -92,58 +92,63 @@ class AdministrationView {
 	}
 
 	private function prestations() {
-		$prestations = Prestation::all();
-		$contenu = '<p><a href="' . $this->app->urlFor('prestation.ajouter') . '">Ajouter une prestation</p>';
-		$contenu .= '<table>';
-		$contenu .= '<caption>Prestations : ' . count($prestations) . '</caption>';
-		$contenu .= '<thead>';
-		$contenu .= '<tr>';
-		$contenu .= '<th>Nom</th>';
-		$contenu .= '<th>Prix</th>';
-		$contenu .= '<th>Note</th>';
-		$contenu .= '<th>Visible</th>';
-		$contenu .= '<th>Actions</th>';
-		$contenu .= '</tr>';
-		$contenu .= '</thead>';
-		$contenu .= '<tbody>';
-		foreach ($prestations as $prestation => $p) {
-			$notes = Note::where('prestationId', '=', $p->id)->get(array('note'));
-			$notesTotal = 0;
-			$moyenne = 0;
-			if ($p->votes > 0) {
-				foreach ($notes as $note => $n) {
-					$notesTotal = ($notesTotal + $n->note);
-				}
-				$moyenne = round(($notesTotal / $p->votes), 2) . '/5';
-			} else {
-				$moyenne = 'Pas de note(s)';
-			}
+		if (isset($_SESSION['admin'])) {
+			$prestations = Prestation::all();
+			$contenu = '<p><a href="' . $this->app->urlFor('prestation.ajouter') . '">Ajouter une prestation</p>';
+			$contenu .= '<table>';
+			$contenu .= '<caption>Prestations : ' . count($prestations) . '</caption>';
+			$contenu .= '<thead>';
 			$contenu .= '<tr>';
-			$contenu .= '<td>' . $p->nom . '</td>';
-			$contenu .= '<td>' . $p->prix . '</td>';
-			$contenu .= '<td>' . $moyenne . '</td>';
-			$contenu .= '<td>' . (($p->visible == 1) ? 'Visible' : 'Masquée') . '</td>';
-			$contenu .= '<td>';
-			$contenu .= '<a  onclick="return confirm(\'Voulez vous supprimer cette prestation ?\')" href="' . $this->app->urlFor('prestation.supprimer', ['id' => $p->id]) . '">Supprimer</a>';
-			if ($p->visible == 0) {
-				$contenu .= '&nbsp;|&nbsp;<a onclick="return confirm(\'Voulez vous afficher cette prestation ?\')" href="' . $this->app->urlFor('prestation.afficher', ['id' => $p->id]) . '">Afficher</a>';
-			} else {
-				$contenu .= '&nbsp;|&nbsp;<a onclick="return confirm(\'Voulez vous masquer cette prestation ?\')" href="' . $this->app->urlFor('prestation.cacher', ['id' => $p->id]) . '">Masquer</a>';
-			}
-			$contenu .= '</td>';
+			$contenu .= '<th>Nom</th>';
+			$contenu .= '<th>Prix</th>';
+			$contenu .= '<th>Note</th>';
+			$contenu .= '<th>Visible</th>';
+			$contenu .= '<th>Actions</th>';
 			$contenu .= '</tr>';
+			$contenu .= '</thead>';
+			$contenu .= '<tbody>';
+			foreach ($prestations as $prestation => $p) {
+				$notes = Note::where('prestationId', '=', $p->id)->get(array('note'));
+				$notesTotal = 0;
+				$moyenne = 0;
+				if ($p->votes > 0) {
+					foreach ($notes as $note => $n) {
+						$notesTotal = ($notesTotal + $n->note);
+					}
+					$moyenne = round(($notesTotal / $p->votes), 2) . '/5';
+				} else {
+					$moyenne = 'Pas de note(s)';
+				}
+				$contenu .= '<tr>';
+				$contenu .= '<td>' . $p->nom . '</td>';
+				$contenu .= '<td>' . $p->prix . '</td>';
+				$contenu .= '<td>' . $moyenne . '</td>';
+				$contenu .= '<td>' . (($p->visible == 1) ? 'Visible' : 'Masquée') . '</td>';
+				$contenu .= '<td>';
+				$contenu .= '<a  onclick="return confirm(\'Voulez vous supprimer cette prestation ?\')" href="' . $this->app->urlFor('prestation.supprimer', ['id' => $p->id]) . '">Supprimer</a>';
+				if ($p->visible == 0) {
+					$contenu .= '&nbsp;|&nbsp;<a onclick="return confirm(\'Voulez vous afficher cette prestation ?\')" href="' . $this->app->urlFor('prestation.afficher', ['id' => $p->id]) . '">Afficher</a>';
+				} else {
+					$contenu .= '&nbsp;|&nbsp;<a onclick="return confirm(\'Voulez vous masquer cette prestation ?\')" href="' . $this->app->urlFor('prestation.cacher', ['id' => $p->id]) . '">Masquer</a>';
+				}
+				$contenu .= '</td>';
+				$contenu .= '</tr>';
+			}
+			$contenu .= '</tbody>';
+			$contenu .= '<tfoot>';
+			$contenu .= '<tr>';
+			$contenu .= '<th>Nom</th>';
+			$contenu .= '<th>Prix</th>';
+			$contenu .= '<th>Note</th>';
+			$contenu .= '<th>Visible</th>';
+			$contenu .= '<th>Actions</th>';
+			$contenu .= '</tr>';
+			$contenu .= '</tfoot>';
+			$contenu .= '</table>';
+		} else {
+			$this->app->flash('error', 'Vous n\'avez pas l\'autorisation pour faire cette action !');
+			$this->app->response->redirect($this->app->urlFor('index'), 200);
 		}
-		$contenu .= '</tbody>';
-		$contenu .= '<tfoot>';
-		$contenu .= '<tr>';
-		$contenu .= '<th>Nom</th>';
-		$contenu .= '<th>Prix</th>';
-		$contenu .= '<th>Note</th>';
-		$contenu .= '<th>Visible</th>';
-		$contenu .= '<th>Actions</th>';
-		$contenu .= '</tr>';
-		$contenu .= '</tfoot>';
-		$contenu .= '</table>';
 		return $contenu;
 	}
 
