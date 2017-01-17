@@ -28,7 +28,10 @@ class PrestaView
 	private function listePrestations(){
 		$uri = $this->app->request->getRootUri();
 		$order = $this->data[1];
-		$contenu = '<div class="form-group">';
+		$contenu = '<div class="page-header">';
+		$contenu .= '<h1>Prestations</h1>';
+		$contenu .= '</div>';
+		$contenu .= '<div class="form-group">';
 		$contenu .= '<label for="trix">Trix :</label>';
 		$contenu .= '<select class="form-control" onchange="this.options[this.selectedIndex].value && (window.location = this.options[this.selectedIndex].value);" value="">';
 		$contenu .= '<option value="' . $this->app->urlFor('prestations', ['order' => 'asc']) . '" ' . (($order == 'asc') ? 'selected' : '') . '>Prix croissant</option>';
