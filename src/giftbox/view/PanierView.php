@@ -28,7 +28,7 @@ class PanierView
 
 	private function panier($recap = null) {
 		$total = 0;
-		$html = '<table>';
+		$html = '<table class="table table-bordered table-striped">';
 		$html .= '<caption>Article(s) : ' . (isset($_SESSION['panier']) ? $_SESSION['panier']['qua'] : '0') . '</caption>';
 		$html .= '<thead>';
 		$html .= '<tr>';
@@ -50,8 +50,8 @@ class PanierView
 				$html .= '<td>' . $a['prix'] . ' &euro;</td>';
 				if (is_null($recap)) {
 					$html .= '<td>';
-					$html .= '<a href="' . $this->app->urlFor('ajouter', ['id' => $a['id']]) . '"><img src="' . $uri . '/web/img/add.png" width="32" alt="Ajouter"></a>';
-					$html .= '<a href="' . $this->app->urlFor('supprimer', ['id' => $a['id']]) . '"><img src="' . $uri . '/web/img/trash.png" width="32" alt="Supprimer"></a>';
+					$html .= '<a title="Ajouter" href="' . $this->app->urlFor('ajouter', ['id' => $a['id']]) . '"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span></a>';
+					$html .= '&nbsp;<a title="Retirer" href="' . $this->app->urlFor('supprimer', ['id' => $a['id']]) . '"><span class="glyphicon glyphicon-minus-sign" aria-hidden="true"></span></a>';
 					$html .= '</td>';
 				}
 				$html .= '</tr>';
@@ -66,7 +66,7 @@ class PanierView
 		$html .= '</tfoot>';
 		$html .= '<table>';
 		if ((isset($_SESSION['panier']) && is_null($recap)) || (isset($_SESSION['panier']) && $_SESSION['panier']['qua'] == 0)) {
-			$html .= '<p><a href="' . $this->app->urlFor('informations') . '">Sauvegarder le coffret</a></p>';
+			$html .= '<p><a href="' . $this->app->urlFor('informations') . '" class="btn btn-primary">Sauvegarder le coffret</a></p>';
 		}
 		return $html;
 	}
@@ -101,7 +101,7 @@ class PanierView
             $this->app->flash('success', 'Prestation ajoutée du panier');
             $this->app->response->redirect($this->app->urlFor('panier'), 200);
 		} else {
-            $this->app->flash('error', 'Impossible de trouver la prestation');
+            $this->app->flash('danger', 'Impossible de trouver la prestation');
             $this->app->response->redirect($this->app->urlFor('panier'), 200);
 		}
 		return null;
@@ -135,26 +135,68 @@ class PanierView
         if (isset($_SESSION['panier'])) {
             if (count($_SESSION['panier']['article']) >= 2) {
                 $formulaire = '<form id="formulaire" action="' . $this->app->urlFor('validation') . '" method="post">';
+                $formulaire .= '<div class="form-group">';
                 $formulaire .= '<label for="nom">Nom : *</label>';
-                $formulaire .= '<input type="text" name="nom"id="nom" placeholder="Nom" required>';
+                $formulaire .= '<div class="input-group">';
+                $formulaire .= '<div class="input-group-addon"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></div>';
+                $formulaire .= '<input type="text" class="form-control" name="nom"id="nom" placeholder="Nom" required>';
+                $formulaire .= '</div>';
+                $formulaire .= '</div>';
+                
+                $formulaire .= '<div class="form-group">';
                 $formulaire .= '<label for="prenom">Prénom : *</label>';
-                $formulaire .= '<input type="text" name="prenom" id="prenom" placeholder="Prénom" required>';
+                $formulaire .= '<div class="input-group">';
+                $formulaire .= '<div class="input-group-addon"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></div>';
+                $formulaire .= '<input type="text" class="form-control" name="prenom" id="prenom" placeholder="Prénom" required>';
+                $formulaire .= '</div>';
+                $formulaire .= '</div>';
+
+                $formulaire .= '<div class="form-group">';
                 $formulaire .= '<label for="email">Email : *</label>';
-                $formulaire .= '<input type="email" name="email" id="email" placeholder="Email" required>';
+                $formulaire .= '<div class="input-group">';
+                $formulaire .= '<div class="input-group-addon">@</div>';
+                $formulaire .= '<input type="email" class="form-control" name="email" id="email" placeholder="Email" required>';
+                $formulaire .= '</div>';
+                $formulaire .= '</div>';
+               
+                $formulaire .= '<div class="form-group">';
                 $formulaire .= '<label for="message">Message : *</label>';
-                $formulaire .= '<textarea name="message" id="message" cols="50" rows="5" required></textarea>';
+                $formulaire .= '<div class="input-group">';
+                $formulaire .= '<div class="input-group-addon"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></div>';
+                $formulaire .= '<textarea name="message" id="message" class="form-control" rows="3" required></textarea>';
+                $formulaire .= '</div>';
+                $formulaire .= '</div>';
+
+                $formulaire .= '<div class="form-group">';
                 $formulaire .= '<label for="password">Mot de passe : </label>';
-                $formulaire .= '<input type="password" name="password" id="password" placeholder="Mot de passe">';
+                $formulaire .= '<div class="input-group">';
+                $formulaire .= '<div class="input-group-addon"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></div>';
+                $formulaire .= '<input type="password" class="form-control" name="password" id="password" placeholder="Mot de passe">';
+                $formulaire .= '</div>';
+                $formulaire .= '</div>';
+
+                $formulaire .= '<div class="form-group">';
                 $formulaire .= '<label for="password_repeat">Mot de passe (Vérif.) : </label>';
-                $formulaire .= '<input type="password" name="password_repeat" id="password_repeat" placeholder="Mot de passe (Vérif.)">';
+                $formulaire .= '<div class="input-group">';
+                $formulaire .= '<div class="input-group-addon"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></div>';
+                $formulaire .= '<input type="password" class="form-control" name="password_repeat" id="password_repeat" placeholder="Mot de passe (Vérif.)">';
+                $formulaire .= '</div>';
+                $formulaire .= '</div>';
+
+                $formulaire .= '<div class="form-group">';
                 $formulaire .= '<label for="paiement">Mode de paiement : *</label>';
-                $formulaire .= '<select name="paiement">';
+                $formulaire .= '<div class="input-group">';
+                $formulaire .= '<div class="input-group-addon"><span class="glyphicon glyphicon-credit-card" aria-hidden="true"></span></div>';
+                $formulaire .= '<select name="paiement" class="form-control">';
                 $formulaire .= '<option value="classique">Classique</value>';
                 $formulaire .= '<option value="cagnotte">Cagnotte</value>';
                 $formulaire .= '</select>';
-                $formulaire .= '<button>Valider</button>';
-                $formulaire .= '</form>';
+                $formulaire .= '</div>';
+                $formulaire .= '</div>';
+
                 $formulaire .= '<p>* Champs obligatoires.</p>';
+                $formulaire .= '<button class="btn btn-primary">Valider</button>';
+                $formulaire .= '</form>';
                 return $formulaire;
             } else {
                 $this->app->flash('info', 'Il vous faut au moins une prestation de deux catégories différentes.');
@@ -195,7 +237,7 @@ class PanierView
                 }
             }
         } else {
-            $this->app->flash('error', 'Erreur dans le formulaire');
+            $this->app->flash('danger', 'Erreur dans le formulaire');
             $this->app->response->redirect($this->app->urlFor('informations'), 200);
         }
 
@@ -206,7 +248,7 @@ class PanierView
                 $errorsMessage .= '<li>' . $error . '</li>';
 			}
             $errorsMessage .= '</ul>';
-            $this->app->flash('error', $errorsMessage);
+            $this->app->flash('danger', $errorsMessage);
             $this->app->response->redirect($this->app->urlFor('informations'), 200);
 		} else {
             if (!empty($password)) {
@@ -222,13 +264,13 @@ class PanierView
 			foreach ($_SESSION['panier']['article'] as $article => $a) {
 				$data['montant'] += ($a['qua'] * $a['prix']);
 			}
-			$contenu .= '<p><u>Mode de paiement :</u> ' . $data['paiement'] . '</p>';
+			$contenu .= '<h3>Mode de paiement : <span class="label label-info">' . $data['paiement'] . '</span></h3>';
 			$contenu .= $this->render('recapitulatif');
 			$_SESSION['coffret'] = $data;
             if (strcmp($data['paiement'], 'cagnotte') == 0) {
                 $contenu .= '<p><a href="' . $this->app->urlFor('cagnotte.creation') . '">Sauvegarder le coffret</a></p>';
             } else {
-                $contenu .= '<p><a href="' . $this->app->urlFor('paiement.form') . '">Sauvegarder le coffret</a></p>';
+                $contenu .= '<p><a href="' . $this->app->urlFor('paiement.form') . '" class="btn btn-primary">Sauvegarder le coffret</a></p>';
             }
 		}
 		return $contenu;
@@ -261,15 +303,34 @@ class PanierView
     private function paiementForm() {
         if (isset($_SESSION['coffret'])) {
             $formulaire = '<form id="paiementForm" action="' . $this->app->urlFor('paiement.validation') . '" method="post">';
+
+            $formulaire .= '<div class="form-group">';
             $formulaire .= '<label for="code">Code (max : 12) : *</label>';
-            $formulaire .= '<input type="text" name="code" id="code" placeholder="Code" maxlength="12" required>';
+            $formulaire .= '<div class="input-group">';
+            $formulaire .= '<div class="input-group-addon"><span class="glyphicon glyphicon-credit-card" aria-hidden="true"></span></div>';
+            $formulaire .= '<input type="text" class="form-control" name="code" id="code" placeholder="Code" maxlength="12" required>';
+            $formulaire .= '</div>';
+            $formulaire .= '</div>';
+
+            $formulaire .= '<div class="form-group">';
             $formulaire .= '<label for="date">Date de validté (MM/AA) (max : 5) : *</label>';
-            $formulaire .= '<input type="text" name="date" id="date" placeholder="AA/MM" maxlength="5" required>';
+            $formulaire .= '<div class="input-group">';
+            $formulaire .= '<div class="input-group-addon"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span></div>';
+            $formulaire .= '<input type="text" class="form-control" name="date" id="date" placeholder="AA/MM" maxlength="5" required>';
+            $formulaire .= '</div>';
+            $formulaire .= '</div>';
+
+            $formulaire .= '<div class="form-group">';
             $formulaire .= '<label for="codesecu">Code de sécurité (max : 3) : *</label>';
-            $formulaire .= '<input type="text" name="codesecu" id="codesecu" placeholder="111" maxlength="3" required>';
-            $formulaire .= '<button>Valider</button>';
-            $formulaire .= '</form>';
+            $formulaire .= '<div class="input-group">';
+            $formulaire .= '<div class="input-group-addon"><span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span></div>';
+            $formulaire .= '<input type="text" class="form-control" name="codesecu" id="codesecu" placeholder="111" maxlength="3" required>';
+            $formulaire .= '</div>';
+            $formulaire .= '</div>';
+
             $formulaire .= '<p>* Champs obligatoires.</p>';
+            $formulaire .= '<button class="btn btn-primary">Valider</button>';
+            $formulaire .= '</form>';
             return $formulaire;
         } else {
             $this->app->response->redirect($this->app->urlFor('index'), 200);
@@ -303,22 +364,22 @@ class PanierView
                         $errorsMessage .= '<li>' . $error . '</li>';
                     }
                     $errorsMessage .= '</ul>';
-                    $this->app->flash('error', $errorsMessage);
+                    $this->app->flash('danger', $errorsMessage);
                     $this->app->response->redirect($this->app->urlFor('paiement.form'), 200);
                 } else {
-                    $this->creerCoffret();
+                    $coffret_id = $this->creerCoffret();
+                    $coffret = Coffret::where('id', '=', $coffret_id)->first();
                     $urlCoffret = 'URL Coffret : http://' . $_SERVER['HTTP_HOST']. $this->app->urlFor('coffret', ['url' => $coffret->url]);
                     $gestion = '';
-                    if (isset($_SESSION['coffret']['password'])) {
-                        if ($_SESSION['coffret']['password'] != '') {
-                            $gestion = '<p>URL Coffret gestion : http://'. $_SERVER['HTTP_HOST'] . $this->app->urlFor('coffret_ges', ['url' => $coffret->urlGestion]) . '</p>';
-                        }
+                    if ($_SESSION['coffret']['password'] != '') {
+                        $gestion = '<p>URL Coffret gestion : http://'. $_SERVER['HTTP_HOST'] . $this->app->urlFor('coffret_ges', ['url' => $coffret->urlGestion]) . '</p>';
                     }
                     $this->app->flash('success', '<p>Coffret sauvegardé avec succès</p><p>' . $urlCoffret . '</p>' . $gestion);
                     $this->app->response->redirect($this->app->urlFor('index'), 200);
+                    unset($_SESSION['coffret']);
                 }
             } else {
-                $this->app->flash('error', 'Erreur dans le formulaire');
+                $this->app->flash('danger', 'Erreur dans le formulaire');
                 $this->app->response->redirect($this->app->urlFor('paiement.form'), 200);
             }
         } else {
@@ -346,7 +407,6 @@ class PanierView
             );
         }
         unset($_SESSION['panier']);
-        unset($_SESSION['coffret']);
         return $coffret_id;
     }
 

@@ -18,11 +18,16 @@ class CatView
     }
 
     private function listeCategories(){
-        $contenu = "";
+        $contenu = '<div class="page-header">';
+        $contenu .= '<h1>Cat&eacute;gories</h1>';
+        $contenu .= '</div>';
+        $contenu .= '<div class="btn-group btn-group-justified" role="group">';
         foreach ($this->data as $d){
-            $contenu .= '<h2>' . $d->nom . '</h2>';
-            $contenu .= '<a href="' . $this->app->urlFor('categories.order', ['categorie' => $d->id, 'order' => 'asc']) . '">Voir les prestations</a>';
+            $contenu .= '<a type="button" class="btn btn-default" href="' . $this->app->urlFor('categories.order', ['categorie' => $d->id, 'order' => 'asc']) . '">';
+            $contenu .= '<h4>' . $d->nom . '</h4>';
+            $contenu .= '</a>';
         }
+        $contenu .= '</div>';
         return $contenu;
     }
     private function categoriePrest(){

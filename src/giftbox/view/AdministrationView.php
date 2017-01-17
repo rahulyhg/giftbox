@@ -22,12 +22,25 @@ class AdministrationView {
 		if (isset($_SESSION['admin'])) {
 			$this->app->response->redirect($this->app->urlFor('administration.prestations'), 200);
 		} else {
-			$contenu = '<form action="' . $this->app->urlFor('administration.connexion') . '" method="post">';
+			$contenu = '<div class="page-header">';
+			$contenu .= '<h1>Administration</h1>';
+			$contenu .= '</div>';
+			$contenu .= '<form action="' . $this->app->urlFor('administration.connexion') . '" method="post">';
+			$contenu .= '<div class="form-group">';
 			$contenu .= '<label for="email">Email :</label>';
-			$contenu .= '<input type="email" name="email" id="email" required>';
+			$contenu .= '<div class="input-group">';
+			$contenu .= '<div class="input-group-addon"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></div>';
+			$contenu .= '<input type="email" class="form-control" name="email" id="email" placeholder="john.doe@email.fr" required>';
+			$contenu .= '</div>';
+			$contenu .= '</div>';
+			$contenu .= '<div class="form-group">';
 			$contenu .= '<label for="password">Mot de passe :</label>';
-			$contenu .= '<input type="password" name="password" id="password" required>';
-			$contenu .= '<button name="Se connecter" value="Se Connecter">Se connecter</button>';
+			$contenu .= '<div class="input-group">';
+			$contenu .= '<div class="input-group-addon"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></div>';
+			$contenu .= '<input type="password" class="form-control" name="password" id="password" placeholder="mot de passe" required>';
+			$contenu .= '</div>';
+			$contenu .= '</div>';
+			$contenu .= '<button type="submit" class="btn btn-primary" name="seconnecter" value="Se Connecter">Se connecter</button>';
 			$contenu .= '</form>';
 		}
 		return $contenu;
@@ -51,7 +64,7 @@ class AdministrationView {
 				}
 			}
 		} else {
-			$this->app->flash('error', 'Erreur dans le formulaire');
+			$this->app->flash('danger', 'Erreur dans le formulaire');
 			$this->app->response->redirect($this->app->urlFor('administration'), 200);
 		}
 		
@@ -62,7 +75,7 @@ class AdministrationView {
 				$errorsMessage .= '<li>' . $error . '</li>';
 			}
 			$errorsMessage .= '</ul>';
-			$this->app->flash('error', $errorsMessage);
+			$this->app->flash('danger', $errorsMessage);
 			$this->app->response->redirect($this->app->urlFor('informations'), 200);
 		} else {
 			$administrateur = Administrateur::where('email', '=', $data['email'])->first();
@@ -72,11 +85,11 @@ class AdministrationView {
 					$this->app->flash('success', 'Vous êtes maintenant connecté');
 					$this->app->response->redirect($this->app->urlFor('administration.prestations'), 200);
 				} else {
-					$this->app->flash('error', 'Mot de passe incorrect');
+					$this->app->flash('danger', 'Mot de passe incorrect');
 					$this->app->response->redirect($this->app->urlFor('administration'), 200);
 				}
 			} else {
-				$this->app->flash('error', 'Impossible de trouver l\'utilisateur');
+				$this->app->flash('danger', 'Impossible de trouver l\'utilisateur');
 				$this->app->response->redirect($this->app->urlFor('administration'), 200);
 			}
 		}
@@ -94,8 +107,8 @@ class AdministrationView {
 	private function prestations() {
 		if (isset($_SESSION['admin'])) {
 			$prestations = Prestation::all();
-			$contenu = '<p><a href="' . $this->app->urlFor('prestation.ajouter') . '">Ajouter une prestation</p>';
-			$contenu .= '<table>';
+			$contenu = '<p><a href="' . $this->app->urlFor('prestation.ajouter') . '" class="btn btn-primary">Ajouter une prestation</a></p>';
+			$contenu .= '<table class="table table-bordered table-striped">';
 			$contenu .= '<caption>Prestations : ' . count($prestations) . '</caption>';
 			$contenu .= '<thead>';
 			$contenu .= '<tr>';
@@ -123,13 +136,13 @@ class AdministrationView {
 				$contenu .= '<td>' . $p->nom . '</td>';
 				$contenu .= '<td>' . $p->prix . '</td>';
 				$contenu .= '<td>' . $moyenne . '</td>';
-				$contenu .= '<td>' . (($p->visible == 1) ? 'Visible' : 'Masquée') . '</td>';
+				$contenu .= '<td><span class="label label-' . (($p->visible == 1) ? 'success' : 'info') . '">' . (($p->visible == 1) ? 'Visible' : 'Masquée') . '</span></td>';
 				$contenu .= '<td>';
-				$contenu .= '<a  onclick="return confirm(\'Voulez vous supprimer cette prestation ?\')" href="' . $this->app->urlFor('prestation.supprimer', ['id' => $p->id]) . '">Supprimer</a>';
+				$contenu .= '<a class="btn btn-danger" onclick="return confirm(\'Voulez vous supprimer cette prestation ?\')" href="' . $this->app->urlFor('prestation.supprimer', ['id' => $p->id]) . '">Supprimer</a>';
 				if ($p->visible == 0) {
-					$contenu .= '&nbsp;|&nbsp;<a onclick="return confirm(\'Voulez vous afficher cette prestation ?\')" href="' . $this->app->urlFor('prestation.afficher', ['id' => $p->id]) . '">Afficher</a>';
+					$contenu .= '&nbsp;<a class="btn btn-warning" onclick="return confirm(\'Voulez vous afficher cette prestation ?\')" href="' . $this->app->urlFor('prestation.afficher', ['id' => $p->id]) . '">Afficher</a>';
 				} else {
-					$contenu .= '&nbsp;|&nbsp;<a onclick="return confirm(\'Voulez vous masquer cette prestation ?\')" href="' . $this->app->urlFor('prestation.cacher', ['id' => $p->id]) . '">Masquer</a>';
+					$contenu .= '&nbsp;<a class="btn btn-warning" onclick="return confirm(\'Voulez vous masquer cette prestation ?\')" href="' . $this->app->urlFor('prestation.cacher', ['id' => $p->id]) . '">Masquer</a>';
 				}
 				$contenu .= '</td>';
 				$contenu .= '</tr>';
@@ -146,7 +159,7 @@ class AdministrationView {
 			$contenu .= '</tfoot>';
 			$contenu .= '</table>';
 		} else {
-			$this->app->flash('error', 'Vous n\'avez pas l\'autorisation pour faire cette action !');
+			$this->app->flash('danger', 'Vous n\'avez pas l\'autorisation pour faire cette action !');
 			$this->app->response->redirect($this->app->urlFor('index'), 200);
 		}
 		return $contenu;
@@ -164,7 +177,7 @@ class AdministrationView {
 				$this->app->response->redirect($this->app->urlFor('administration.prestations'), 200);
 			}
 		} else {
-			$this->app->flash('error', 'Vous n\'avez pas l\'autorisation pour faire cette action !');
+			$this->app->flash('danger', 'Vous n\'avez pas l\'autorisation pour faire cette action !');
 			$this->app->response->redirect($this->app->urlFor('index'), 200);
 		}
 		return null;
@@ -183,7 +196,7 @@ class AdministrationView {
 				$this->app->response->redirect($this->app->urlFor('administration.prestations'), 200);
 			}
 		} else {
-			$this->app->flash('error', 'Vous n\'avez pas l\'autorisation pour faire cette action !');
+			$this->app->flash('danger', 'Vous n\'avez pas l\'autorisation pour faire cette action !');
 			$this->app->response->redirect($this->app->urlFor('index'), 200);
 		}
 		return null;
@@ -202,7 +215,7 @@ class AdministrationView {
 				$this->app->response->redirect($this->app->urlFor('administration.prestations'), 200);
 			}
 		} else {
-			$this->app->flash('error', 'Vous n\'avez pas l\'autorisation pour faire cette action !');
+			$this->app->flash('danger', 'Vous n\'avez pas l\'autorisation pour faire cette action !');
 			$this->app->response->redirect($this->app->urlFor('index'), 200);
 		}
 		return null;
@@ -212,27 +225,60 @@ class AdministrationView {
 		$contenu = '';
 		if (isset($_SESSION['admin'])) {
 			$categories = Categorie::all();
-			$contenu = '<form action="' . $this->app->urlFor('administration.prestation.ajouter') . '" method="post" enctype="multipart/form-data">';
+			$contenu = '<div class="page-header">';
+			$contenu .= '<h1>Ajouter une prestation</h1>';
+			$contenu .= '</div>';
+			$contenu .= '<form action="' . $this->app->urlFor('administration.prestation.ajouter') . '" method="post" enctype="multipart/form-data">';
+			$contenu .= '<div class="form-group">';
 			$contenu .= '<label for="nom">Nom :</label>';
-			$contenu .= '<input type="text" name="nom" id="nom" required>';
+			$contenu .= '<div class="input-group">';
+			$contenu .= '<div class="input-group-addon"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></div>';
+			$contenu .= '<input type="text" class="form-control" placeholder="Place de concert" name="nom" id="nom" required>';
+			$contenu .= '</div>';
+			$contenu .= '</div>';
+
+			$contenu .= '<div class="form-group">';
 			$contenu .= '<label for="descr">Description :</label>';
-			$contenu .= '<textarea name="descr" id="message" cols="50" rows="5" required></textarea>';
+			$contenu .= '<div class="input-group">';
+			$contenu .= '<div class="input-group-addon"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></div>';
+			$contenu .= '<textarea name="descr" id="message" placeholder="Place de concert du groupe XXXX" class="form-control" rows="3" required></textarea>';
+			$contenu .= '</div>';
+			$contenu .= '</div>';
+
+			$contenu .= '<div class="form-group">';
 			$contenu .= '<label for="prix">Prix :</label>';
-			$contenu .= '<input type="text" name="prix" id="prix" required>';
+			$contenu .= '<div class="input-group">';
+			$contenu .= '<div class="input-group-addon"><span class="glyphicon glyphicon-euro" aria-hidden="true"></span></div>';
+			$contenu .= '<input type="text" class="form-control" placeholder="25.99" name="prix" id="prix" required>';
+			$contenu .= '</div>';
+			$contenu .= '</div>';
+
+			$contenu .= '<div class="form-group">';
 			$contenu .= '<label for="cat_id">Catégorie :</label>';
-			$contenu .= '<select name="cat_id">';
+			$contenu .= '<select name="cat_id" class="form-control">';
 			foreach ($categories as $categorie => $c) {
 				$contenu .= '<option value="' . $c->id . '">' . $c->nom . '</value>';
 			}
 			$contenu .= '</select>';
+			$contenu .= '</div>';
+
+			$contenu .= '<div class="form-group">';
 			$contenu .= '<label for="img">Image :</label>';
 			$contenu .= '<input type="file" name="img" id="img" accept="image/*" required>';
-			$contenu .= '<label for="visible">Visible :</label>';
+			$contenu .= '<p class="help-block">Image de présentation de la prestation</p>';
+			$contenu .= '</div>';
+
+			$contenu .= '<div class="checkbox">';
+			$contenu .= '<label>';
 			$contenu .= '<input type="checkbox" name="visible" id="visible" value="visible" checked>';
-			$contenu .= '<button value="Ajouter">Ajouter</button>';
+			$contenu .= 'Visible sur le site ?';
+			$contenu .= '</label>';
+			$contenu .= '</div>';
+
+			$contenu .= '<button value="Ajouter" class="btn btn-primary">Ajouter</button>';
 			$contenu .= '</form>';
 		} else {
-			$this->app->flash('error', 'Vous n\'avez pas l\'autorisation pour faire cette action !');
+			$this->app->flash('danger', 'Vous n\'avez pas l\'autorisation pour faire cette action !');
 			$this->app->response->redirect($this->app->urlFor('index'), 200);
 		}
 		return $contenu;
@@ -257,7 +303,7 @@ class AdministrationView {
 					}
 				}
 			} else {
-				$this->app->flash('error', 'Erreur dans le formulaire');
+				$this->app->flash('danger', 'Erreur dans le formulaire');
 				$this->app->response->redirect($this->app->urlFor('administration'), 200);
 			}
 			
@@ -268,7 +314,7 @@ class AdministrationView {
 					$errorsMessage .= '<li>' . $error . '</li>';
 				}
 				$errorsMessage .= '</ul>';
-				$this->app->flash('error', $errorsMessage);
+				$this->app->flash('danger', $errorsMessage);
 				$this->app->response->redirect($this->app->urlFor('informations'), 200);
 			} else {
 				$data['votes'] = 0;
@@ -289,7 +335,7 @@ class AdministrationView {
 				$this->app->response->redirect($this->app->urlFor('administration.prestations'), 200);
 			}
 		} else {
-			$this->app->flash('error', 'Vous n\'avez pas l\'autorisation pour faire cette action !');
+			$this->app->flash('danger', 'Vous n\'avez pas l\'autorisation pour faire cette action !');
 			$this->app->response->redirect($this->app->urlFor('index'), 200);
 		}
 		return null;

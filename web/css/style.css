@@ -1,62 +1,11 @@
-.prestaImg{
-	width:80px;
-}
-
-.alert {
-	width: 100%;
-	margin: 5px auto;
-	padding: 10px;
-	background-color: #b8b8b8;
-	color: #fff;
-	text-align: center;
-	text-decoration: none;
-	text-shadow: none;
-}
-
-.alert-info {
-	background-color: #708dd1;
-}
-
-.alert-success {
-	background-color: #65e01d;
-}
-
-.alert-error {
-	background-color: #cf403f;
-}
-
-table, td, th {
-	border: 1px solid #ddd;
-	text-align: left;
-}
-
-table {
-	border-collapse: collapse;
-	width: 100%;
-}
-
-th, td {
-	padding: 15px;
-}
-
-.cart {
-	vertical-align: middle;
-	margin: -5px 5px 0 0;
-}
-
-label, button, input, select {
-	display: block;
-	width: 150px;
+.thumbnail img {
+	height: 200px;
 }
 
 .notation {
 	text-align: left;
 	width: 100px;
 	height: 35px;
-}
-
-.notation .stars {
-	text-align: left;
 }
 
 .notation .stars a {

@@ -239,42 +239,42 @@ $app->post('/administration/connexion', function() {
 $app->get('/administration/prestations', function(){
 	$app = \Slim\Slim::getInstance();
 	$vue = new \giftbox\view\AdministrationView($app);
-	$html = new giftbox\view\adminView($vue->render('aprestations'));
+	$html = new giftbox\view\htmlView($vue->render('aprestations'));
 	$html->render();
 })->name('administration.prestations');
 
 $app->get('/administration/prestation/cacher/:id', function($id){
 	$app = \Slim\Slim::getInstance();
 	$vue = new \giftbox\view\AdministrationView($app, [$id]);
-	$html = new giftbox\view\adminView($vue->render('cacher'));
+	$html = new giftbox\view\htmlView($vue->render('cacher'));
 	$html->render();
 })->name('prestation.cacher');
 
 $app->get('/administration/prestation/afficher/:id', function($id){
 	$app = \Slim\Slim::getInstance();
 	$vue = new \giftbox\view\AdministrationView($app, [$id]);
-	$html = new giftbox\view\adminView($vue->render('afficher'));
+	$html = new giftbox\view\htmlView($vue->render('afficher'));
 	$html->render();
 })->name('prestation.afficher');
 
 $app->get('/administration/prestation/supprimer/:id', function($id){
 	$app = \Slim\Slim::getInstance();
 	$vue = new \giftbox\view\AdministrationView($app, [$id]);
-	$html = new giftbox\view\adminView($vue->render('supprimer'));
+	$html = new giftbox\view\htmlView($vue->render('supprimer'));
 	$html->render();
 })->name('prestation.supprimer');
 
 $app->get('/administration/prestation/ajouter', function(){
 	$app = \Slim\Slim::getInstance();
 	$vue = new \giftbox\view\AdministrationView($app);
-	$html = new giftbox\view\adminView($vue->render('ajouter'));
+	$html = new giftbox\view\htmlView($vue->render('ajouter'));
 	$html->render();
 })->name('prestation.ajouter');
 
 $app->post('/administration/prestation/ajouts', function(){
 	$app = \Slim\Slim::getInstance();
 	$vue = new \giftbox\view\AdministrationView($app);
-	$html = new giftbox\view\adminView($vue->render('ajouterPrestation'));
+	$html = new giftbox\view\htmlView($vue->render('ajouterPrestation'));
 	$html->render();
 })->name('administration.prestation.ajouter');
 

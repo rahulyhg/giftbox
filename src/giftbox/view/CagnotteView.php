@@ -32,7 +32,7 @@ class CagnotteView
 			$formulaire .= '<button name="participer" value="Participer">Participer</button>';
 			$formulaire .= '</form>';
 		} else {
-			$this->app->flash('error', 'Impossible de trouver la cagnotte !');
+			$this->app->flash('danger', 'Impossible de trouver la cagnotte !');
 			$this->app->response->redirect($this->app->urlFor('index'), 200);
 		}
 		return $formulaire;
@@ -72,7 +72,7 @@ class CagnotteView
 						$this->app->response->redirect($this->app->urlFor('cagnotte.gestion', ['url' => $this->data]), 200);
 						$coffret->update(array('url' => uniqid()));
 					} else {
-						$this->app->flash('error', 'La cagnotte est déjà cloturée !');
+						$this->app->flash('danger', 'La cagnotte est déjà cloturée !');
 						$this->app->response->redirect($this->app->urlFor('cagnotte.gestion', ['url' => $this->data]), 200);
 					}
 				} else {
@@ -80,7 +80,7 @@ class CagnotteView
 						$this->app->response->redirect($this->app->urlFor('cagnotte.gestion', ['url' => $this->data]), 200);
 				}
 			} else {
-				$this->app->flash('error', 'Impossible de trouver la cagnotte !');
+				$this->app->flash('danger', 'Impossible de trouver la cagnotte !');
 				$this->app->response->redirect($this->app->urlFor('cagnotte.gestion', ['url' => $this->data]), 200);
 			}
 		} else {
@@ -110,7 +110,7 @@ class CagnotteView
 					$this->app->response->redirect($this->app->urlFor('cagnotte.gestion', ['url' => $this->data]), 200);
 				}
 			} else {
-				$this->app->flash('error', 'Impossible de vous connecter');
+				$this->app->flash('danger', 'Impossible de vous connecter');
 				$this->app->response->redirect($this->app->urlFor('cagnotte.connexionForm', ['url' => $this->data]), 200);
 			}
 		} else {
