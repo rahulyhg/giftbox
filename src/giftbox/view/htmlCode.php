@@ -59,13 +59,13 @@ echo '
 			<li' . (($ressourceUri == '/' || empty($ressourceUri)) ? ' class="active"' : '') . '><a href="' . $directory . '">Accueil</a></li>
 			<li' . (strstr($ressourceUri, "prestations", true) ? ' class="active"' : '') . '><a href="' . $directory . 'prestations/all/asc">Prestations</a></li>
 			<li' . (strstr($ressourceUri, "categories", true) ? ' class="active"' : '') . '><a href="' . $directory . 'categories">Catégories</a></li>
-			' . (isset($_SESSION['admin']) ? '<li><a href="' . $directory . 'administration/deconnexion">Se deconnecter</a></li>' : '') . '
 		  </ul>
 		  <ul class="nav navbar-nav navbar-right">
 			<a href="' . $directory . 'panier" class="btn btn-' . (strstr($ressourceUri, "administration", true) ? 'success' : 'warning') . ' navbar-btn">
 				<span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span>
 				' . (isset($_SESSION['panier']) ? $_SESSION['panier']['qua'] : 0) . '</a>
 			<a href="' . $directory . 'administration" class="btn btn-' . (strstr($ressourceUri, "administration", true) ? 'info' : 'primary') . '"><span class="glyphicon glyphicon-cog"></span> Administration</a>
+			' . (isset($_SESSION['admin']) ? '<a href="' . $directory . 'administration/deconnexion"  class="btn btn-danger">Se deconnecter</a>' : '') . '
 		  </ul>
 		</div>
 	  </div>
