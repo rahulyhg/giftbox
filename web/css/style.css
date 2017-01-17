@@ -31,3 +31,12 @@
 	color: orange;
 	cursor: pointer;
 }
+
+.vert-align{
+	vertical-align: middle!important;
+}
+
+.sign{
+	margin-left: 5px;
+	margin-right: 5px;
+}
