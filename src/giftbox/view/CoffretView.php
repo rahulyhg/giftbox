@@ -10,6 +10,7 @@ namespace giftbox\view;
 
 
 use giftbox\models\Coffret;
+use giftbox\models\CoffretContenu;
 
 class CoffretView
 {
@@ -22,16 +23,42 @@ class CoffretView
         $this->data = $array;
     }
     private function gererCoffret(){
-        // gerer la connexion grace au mdp du coffret
+        $contenu = "";
         if(!empty($_SESSION['coffret_edit'])){
-            if($_SESSION['coffret_edit'] === "allowed"){
-                $contenu = "<h1>Gestion du coffret</h1>";
-                $contenu.= "<h2>Statut du coffret : " . $this->data[0]->statut . "</h2>";
+            if(!empty($_SESSION['coffret_edit'])){
+                $uri = $this->app->request->getRootUri();
+                $coffret = $this->data[0];
+                $prestations = $coffret->prestationsCoffret();
+
+
+                $contenu.= "<h1>Contenu du coffret</h1>";
+                $contenu.="<table>";
+                $contenu.="<thead>";
+                $contenu.="<tr>";
+                $contenu.="<th>Nom</th>";
+                $contenu.="<th>Quantité</th>";
+                $contenu.="<th>Actions</th>";
+                $contenu.="</tr>";
+                $contenu.="</thead>";
+                $contenu.="<tbody>";
+                foreach ($prestations as $p){
+                    $contenu.="<tr>";
+                    $contenu.="<td>".$p->prestation()->nom."</td>";
+                    $contenu.="<td>".$p->qua."</td>";
+                    $contenu .= '<td>';
+                    $contenu .= '<a href="' . $this->app->urlFor('coffret.ajouter', ['idPresta' => $p->prestation()->id,'urlGestion'=>$coffret->urlGestion]) . '"><img src="' . $uri . '/web/img/add.png" width="32" alt="Ajouter"></a>';
+                    $contenu .= '<a href="' . $this->app->urlFor('coffret.supprimer', ['idPresta' => $p->prestation()->id ,'urlGestion'=>$coffret->urlGestion]) . '"><img src="' . $uri . '/web/img/trash.png" width="32" alt="Supprimer"></a>';
+                    $contenu .= '</td>';
+                    $contenu.="</tr>";
+                }
+                $contenu.="</tbody>";
+                $contenu.="</table>";
+                $contenu.= "<h2>Statut du coffret : " . $coffret->statut . "</h2>";
                 $contenu.= '<a href="'.$this->app->urlFor('coffret_disconnect').'">deconnexion</a>';
             }
         }else{
-            $contenu = '<form action="' . $this->app->urlFor('coffret_connect', ["url"=>$this->data[0]->urlGestion]) . '" method="post">';
-            $contenu .= '<label for="password">Mot de passe du coffret </label>';
+            $contenu .= '<form action="' . $this->app->urlFor('coffret_connect', ["url"=>$this->data[0]->urlGestion]) . '" method="post">';
+            $contenu .= '<label for="password">Mot de passe du coffret :</label>';
             $contenu .= '<input type="password" name="password" id="password" required>';
             $contenu .= '<button name="Se connecter" value="Se Connecter">Se connecter</button>';
             $contenu .= '</form>';
@@ -73,6 +100,33 @@ class CoffretView
         return $contenu;
     }
 
+    public function ajouter(){
+        $prestation = $this->data[0];
+        $urlGestion = $this->data[1];
+        $idCoffret = Coffret::where('urlGestion', '=', $urlGestion)->first()->id;
+        $qua = CoffretContenu::where('coffret_id', '=', $idCoffret)->where('prestation_id', '=', $prestation->id)->first()->qua;
+
+        $qua+=1;
+
+        CoffretContenu::where('coffret_id', '=', $idCoffret)->where('prestation_id', '=', $prestation->id)->update(array('qua'=>$qua));
+
+        $this->app->response->redirect($this->app->urlFor('coffret_ges', ['url' => $urlGestion]),200);
+    }
+    public function supprimer(){
+        $prestation = $this->data[0];
+        $urlGestion = $this->data[1];
+        $idCoffret = Coffret::where('urlGestion', '=', $urlGestion)->first()->id;
+
+        $qua = CoffretContenu::where('coffret_id', '=', $idCoffret)->where('prestation_id', '=', $prestation->id)->first()->qua;
+        if($qua === 1){
+            CoffretContenu::where('coffret_id', '=', $idCoffret)->where('prestation_id', '=', $prestation->id)->delete();
+        }else{
+            $qua-=1;
+            CoffretContenu::where('coffret_id', '=', $idCoffret)->where('prestation_id', '=', $prestation->id)->update(array('qua'=>$qua));
+        }
+        $this->app->response->redirect($this->app->urlFor('coffret_ges', ['url' => $urlGestion]),200);
+    }
+
     public function render($aff){
         switch ($aff){
             case 'gestion_coffret':
@@ -88,6 +142,12 @@ class CoffretView
                 break;
             case "disconnect":
                 $this->disconnect();
+                break;
+            case "add":
+                $this->ajouter();
+                break;
+            case "del":
+                $this->supprimer();
                 break;
             default:
                 return "";

@@ -52,6 +52,7 @@ echo '
             <li><a href="' . $directory . 'prestations/all/asc">Prestations</a></li>
             <li><a href="' . $directory . 'categories">Catégories</a></li>
             <li><a href="' . $directory . 'administration">Administration</a>' . (isset($_SESSION['admin']) ? '&nbsp;|&nbsp;<a href="' . $directory . '/deconnexion">Se deconnecter</a>' : '') . '</li>
+            <li><a href="' . $directory . 'administration">Administration</a>' . (isset($_SESSION['coffret_edit']) ? '&nbsp;|&nbsp;<a href="'.$directory.'/coffret/disconnect/true">Se deconnecter</a>' : '') . '</li>
           </ul>
         </div>
       </div>

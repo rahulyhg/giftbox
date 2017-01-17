@@ -148,6 +148,24 @@ $app->post('/coffret/edit/connect/:url', function($url){
     $html->render();
 })->name('coffret_connect');
 
+$app->get('/coffret/edit/add/:idPresta/:urlGestion', function($idPresta, $urlGestion){
+    $app = \Slim\Slim::getInstance();
+    $prestation = \giftbox\models\Prestation::where('id', '=', $idPresta)->first();
+    $data = [$prestation, $urlGestion];
+    $vue = new \giftbox\view\CoffretView($app, $data);
+    $html = new \giftbox\view\htmlView($vue->render('add'));
+    $html->render();
+})->name('coffret.ajouter');
+
+$app->get('/coffret/edit/del/:idPresta/:urlGestion', function($idPresta, $urlGestion){
+    $app = \Slim\Slim::getInstance();
+    $prestation = \giftbox\models\Prestation::where('id', '=', $idPresta)->first();
+    $data = [$prestation, $urlGestion];
+    $vue = new \giftbox\view\CoffretView($app, $data);
+    $html = new \giftbox\view\htmlView($vue->render('del'));
+    $html->render();
+})->name('coffret.supprimer');
+
 $app->get('/cagnotte', function() {
     $app = \Slim\Slim::getInstance();
     $vue = new \giftbox\view\PanierView($app);
