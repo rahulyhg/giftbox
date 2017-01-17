@@ -25,7 +25,7 @@ class CoffretView
     private function gererCoffret(){
         $contenu = "";
         if(!empty($_SESSION['coffret_edit'])){
-            if(!empty($_SESSION['coffret_edit'])){
+
                 $uri = $this->app->request->getRootUri();
                 $coffret = $this->data[0];
                 $prestations = $coffret->prestationsCoffret();
@@ -55,7 +55,7 @@ class CoffretView
                 $contenu.="</table>";
                 $contenu.= "<h2>Statut du coffret : " . $coffret->statut . "</h2>";
                 $contenu.= '<p><a href="'.$this->app->urlFor('coffret_disconnect').'">deconnexion</a></p>';
-            }
+
         }else{
             $contenu .= '<form action="' . $this->app->urlFor('coffret_connect', ["url"=>$this->data[0]->urlGestion]) . '" method="post">';
             $contenu .= '<label for="password">Mot de passe du coffret :</label>';
@@ -72,8 +72,14 @@ class CoffretView
             $password = filter_var($post['password'], FILTER_SANITIZE_STRING);
             if(password_verify($password, $this->data[0]->password)){
                 $_SESSION['coffret_edit'] = "allowed";
+                $this->app->flash('success', 'Connexion réussie !');
+            }else{
+                $this->app->flash('danger', 'Connexion impossible, mot de passe incorrect !');
             }
+        }else{
+            $this->app->flash('danger', 'Une erreur s\'est produite !');
         }
+
         $this->app->response->redirect($this->app->urlFor('coffret_ges', ['url'=>$this->data[0]->urlGestion]), 200);
 
         return null;
@@ -82,7 +88,10 @@ class CoffretView
     private function disconnect(){
         if(isset($_SESSION['coffret_edit'])){
             unset($_SESSION['coffret_edit']);
+            $this->app->flash('success', 'Déconnexion réussie !');
             $this->app->response->redirect($this->app->urlFor('index'),200);
+        }else{
+            $this->app->flash('danger', 'Une erreur s\'est produite !');
         }
         return null;
     }
@@ -103,27 +112,54 @@ class CoffretView
     public function ajouter(){
         $prestation = $this->data[0];
         $urlGestion = $this->data[1];
-        $idCoffret = Coffret::where('urlGestion', '=', $urlGestion)->first()->id;
-        $qua = CoffretContenu::where('coffret_id', '=', $idCoffret)->where('prestation_id', '=', $prestation->id)->first()->qua;
+        $coffret = Coffret::where('urlGestion', '=', $urlGestion)->first();
+
+
+        $qua = CoffretContenu::where('coffret_id', '=', $coffret->id)->where('prestation_id', '=', $prestation->id)->first()->qua;
 
         $qua+=1;
 
-        CoffretContenu::where('coffret_id', '=', $idCoffret)->where('prestation_id', '=', $prestation->id)->update(array('qua'=>$qua));
+        CoffretContenu::where('coffret_id', '=', $coffret->id)->where('prestation_id', '=', $prestation->id)->update(array('qua'=>$qua));
+
+        $total = 0;
+        foreach ($coffret->prestationsCoffret() as $contenu){
+            $d = $contenu->prestation();
+            $total+= $d->prix * $contenu->qua;
+        }
+
+        if($total !== $coffret->montant){
+            $coffret->montant = $total;
+            $coffret->save();
+        }
+
+        $this->app->flash('success', 'Ajout réussi !');
 
         $this->app->response->redirect($this->app->urlFor('coffret_ges', ['url' => $urlGestion]),200);
     }
     public function supprimer(){
         $prestation = $this->data[0];
         $urlGestion = $this->data[1];
-        $idCoffret = Coffret::where('urlGestion', '=', $urlGestion)->first()->id;
+        $coffret = Coffret::where('urlGestion', '=', $urlGestion)->first();
 
-        $qua = CoffretContenu::where('coffret_id', '=', $idCoffret)->where('prestation_id', '=', $prestation->id)->first()->qua;
+        $qua = CoffretContenu::where('coffret_id', '=', $coffret->id)->where('prestation_id', '=', $prestation->id)->first()->qua;
         if($qua === 1){
-            CoffretContenu::where('coffret_id', '=', $idCoffret)->where('prestation_id', '=', $prestation->id)->delete();
+            CoffretContenu::where('coffret_id', '=', $coffret->id)->where('prestation_id', '=', $prestation->id)->delete();
         }else{
             $qua-=1;
-            CoffretContenu::where('coffret_id', '=', $idCoffret)->where('prestation_id', '=', $prestation->id)->update(array('qua'=>$qua));
+            CoffretContenu::where('coffret_id', '=', $coffret->id)->where('prestation_id', '=', $prestation->id)->update(array('qua'=>$qua));
         }
+
+        $total = 0;
+        foreach ($coffret->prestationsCoffret() as $contenu){
+            $d = $contenu->prestation();
+            $total+= $d->prix * $contenu->qua;
+        }
+
+        if($total !== $coffret->montant){
+            $coffret->montant = $total;
+            $coffret->save();
+        }
+        $this->app->flash('success', 'Suppression réussie !');
         $this->app->response->redirect($this->app->urlFor('coffret_ges', ['url' => $urlGestion]),200);
     }
 
