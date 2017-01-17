@@ -190,6 +190,13 @@ $app->post('/cagnotte/connexion/:url', function($url) {
 $app->get('/cagnotte/participer/:url', function($url) {
 	$app = \Slim\Slim::getInstance();
 	$vue = new \giftbox\view\CagnotteView($app, $url);
+	$html = new \giftbox\view\htmlView($vue->render('participerForm'));
+	$html->render();
+})->name('cagnotte.participationForm');
+
+$app->post('/cagnotte/participer/:url', function($url) {
+	$app = \Slim\Slim::getInstance();
+	$vue = new \giftbox\view\CagnotteView($app, $url);
 	$html = new \giftbox\view\htmlView($vue->render('participer'));
 	$html->render();
 })->name('cagnotte.participation');

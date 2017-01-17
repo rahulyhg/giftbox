@@ -22,9 +22,41 @@ class CagnotteView
 		$this->app = $app;
 	}
 
+	private function participerForm() {
+		$formulaire = '';
+		$cagnotte = Cagnotte::where('urlContribution', '=', $this->data);
+		if (!is_null($cagnotte)) {
+			$formulaire .= '<form action="' . $this->app->urlFor('cagnotte.participation', ['url' => $this->data]) . '" method="post">';
+			$formulaire .= '<label for="montant">Montant :</label>';
+			$formulaire .= '<input type="text" name="montant" id="montant" placeholder="0.00€">';
+			$formulaire .= '<button name="participer" value="Participer">Participer</button>';
+			$formulaire .= '</form>';
+		} else {
+			$this->app->flash('error', 'Impossible de trouver la cagnotte !');
+			$this->app->response->redirect($this->app->urlFor('index'), 200);
+		}
+		return $formulaire;
+	}
 
 	private function participer() {
-		
+		$post = $this->app->request->post();
+		if (!empty($post)) {
+			if (!empty($post['montant'])) {
+				$cagnotte = Cagnotte::where('urlContribution', '=', $this->data)->first();
+				if (!is_null($cagnotte)) {
+					if ($cagnotte->cloture == 0) {
+						$montant = filter_var($post['montant'], FILTER_SANITIZE_NUMBER_FLOAT);
+						$total = ($cagnotte->montant + $montant);
+						$cagnotte->update(array('montant' => $total));
+						$this->app->flash('success', 'Merci d\'avoir participé à la cagnotte !');
+						$this->app->response->redirect($this->app->urlFor('cagnotte.participationForm', ['url' => $this->data]), 200);
+					}
+				}
+			} else {
+				$this->app->flash('danger', 'Veuillez préciser un montant d\'au moins 1€ !');
+				$this->app->response->redirect($this->app->urlFor('cagnotte.participationForm', ['url' => $this->data]), 200);
+			}
+		}
 		return null;
 	}
 
@@ -125,6 +157,10 @@ class CagnotteView
 		switch ($aff){
 			case 'gestion':
 				$content = $this->gestion();
+				break;
+
+			case 'participerForm':
+				$content = $this->participerForm();
 				break;
 
 			case 'participer':
