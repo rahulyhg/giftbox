@@ -23,8 +23,9 @@ class CoffretView
         $this->data = $array;
     }
     private function gererCoffret(){
-        $contenu = "";
-        if(!empty($_SESSION['coffret_edit'])){
+        if(isset($this->data[0]->urlGestion)){
+            $contenu = "";
+            if(!empty($_SESSION['coffret_edit'])){
 
                 $uri = $this->app->request->getRootUri();
                 $coffret = $this->data[0];
@@ -46,8 +47,8 @@ class CoffretView
                     $contenu .="<td>".$p->prestation()->nom."</td>";
                     $contenu .="<td>".$p->qua."</td>";
                     $contenu .= '<td>';
-                    $contenu .= '<a href="' . $this->app->urlFor('coffret.ajouter', ['idPresta' => $p->prestation()->id,'urlGestion'=>$coffret->urlGestion]) . '"><img src="' . $uri . '/web/img/add.png" width="32" alt="Ajouter"></a>';
-                    $contenu .= '<a href="' . $this->app->urlFor('coffret.supprimer', ['idPresta' => $p->prestation()->id ,'urlGestion'=>$coffret->urlGestion]) . '"><img src="' . $uri . '/web/img/trash.png" width="32" alt="Supprimer"></a>';
+                    $contenu .= '<a href="' . $this->app->urlFor('coffret.ajouter', ['idPresta' => $p->prestation()->id,'urlGestion'=>$coffret->urlGestion]) . '"><span class="sign glyphicon glyphicon-plus-sign" aria-hidden="true"></span></a>';
+                    $contenu .= '<a href="' . $this->app->urlFor('coffret.supprimer', ['idPresta' => $p->prestation()->id ,'urlGestion'=>$coffret->urlGestion]) . '"><span class="sign glyphicon glyphicon-minus-sign" aria-hidden="true"></span> </a>';
                     $contenu .= '</td>';
                     $contenu .="</tr>";
                 }
@@ -56,16 +57,21 @@ class CoffretView
                 $contenu.= "<h2>Statut du coffret : " . $coffret->statut . "</h2>";
                 $contenu.= '<p><a class="btn btn-success btn-lg" href="'.$this->app->urlFor('coffret_disconnect').'">deconnexion</a></p>';
 
+            }else{
+                $contenu .= '<form action="' . $this->app->urlFor('coffret_connect', ["url"=>$this->data[0]->urlGestion]) . '" method="post">';
+                $contenu .="<div class='form-group'>";
+                $contenu .= '<label class="col-md-12" for="password">Mot de passe du coffret </label>';
+                $contenu .= '<input type="password" name="password" id="password" required class="form-control" placeholder="Password">';
+                $contenu .="</div>";
+                $contenu .= '<button class="btn btn-info" name="Se connecter" value="Se Connecter">Se connecter</button>';
+                $contenu .= '</form>';
+            }
+            return $contenu;
         }else{
-            $contenu .= '<form action="' . $this->app->urlFor('coffret_connect', ["url"=>$this->data[0]->urlGestion]) . '" method="post">';
-            $contenu .="<div class='form-group'>";
-            $contenu .= '<label class="" for="password">Mot de passe du coffret </label>';
-            $contenu .= '<input type="password" name="password" id="password" required class="form-control" placeholder="Password">';
-            $contenu .="</div>";
-            $contenu .= '<button class="btn btn-info" name="Se connecter" value="Se Connecter">Se connecter</button>';
-            $contenu .= '</form>';
+            $this->app->flash('danger','Url incorrect, veuillez utiliser l\'url de gestion fournis lors de la commande !');
+            $this->app->response->redirect($this->app->urlFor('index'), 200);
         }
-        return $contenu;
+
     }
 
     private function connect(){
@@ -93,9 +99,9 @@ class CoffretView
             $this->app->flash('success', 'Déconnexion réussie !');
             $this->app->response->redirect($this->app->urlFor('index'),200);
         }else{
-            $this->app->flash('danger', 'Une erreur s\'est produite !');
+            $this->app->flashNow('danger', 'Une erreur s\'est produite !');
+            $this->app->response->redirect($this->app->urlFor('index'),200);
         }
-        return null;
     }
 
     private function afficherCoffret(){
@@ -107,19 +113,19 @@ class CoffretView
         $contenu .= '</div>';
 
         $contenu .= '<div class="row">';
-        $contenu .= '<table class="table table-bordered">';
+        $contenu .= '<table class="table">';
         foreach ($this->data[0]->prestationsCoffret() as $contenuCoffret){
             $d = $contenuCoffret->prestation();
             $contenu .= '<tr>';
-            $contenu .= '<td class=""><u>Prestation</u> : ' . $d->nom . '</td>';
-            $contenu .= '<td class=""><img class="img-responsive img" src="' . $uri . '/web/img/' . $d->img . '"></td>';
-            $contenu .= '<td class="">' . $d->descr . '</td>';
+            $contenu .= '<td class="h4 vert-align text-center"><u>Prestation</u> : ' . $d->nom . '</td>';
+            $contenu .= '<td><img class="img-responsive" width="120em" src="' . $uri . '/web/img/' . $d->img . '"></td>';
+            $contenu .= '<td class="vert-align text-center lead">' . $d->descr . '</td>';
             $contenu .= '</tr>';
         }
-        $contenu .= '</table';
+        $contenu .= '</table>';
         $contenu .= '</div>';
         $contenu .= '<div class="row">';
-        $contenu .= '<div class="col-md-12"><div class="h4 text-center">Message de'.$this->data[0]->nom.' '.$this->data[0]->prenom.' : </div><div class="text-center lead">'.$this->data[0]->message.'</div>';
+        $contenu .= '<div class="col-md-12"><div class="h4 text-center">Message de <u class="lead">'.$this->data[0]->prenom.' '.$this->data[0]->nom.'</u> : </div><div class="text-center lead">'.$this->data[0]->message.'</div>';
         $contenu .= '</div>';
         $contenu .= '</div>';
 
