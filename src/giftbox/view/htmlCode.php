@@ -49,9 +49,9 @@ echo '
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
             <li class="active"><a href="' . $directory . '">Accueil</a></li>
-            <li><a href="' . $directory . '/prestations/asc">Prestations</a></li>
-            <li><a href="' . $directory . '/categories">Catégories</a></li>
-            <li><a href="' . $directory . '/administration">Administration</a>' . (isset($_SESSION['admin']) ? '&nbsp;|&nbsp;<a href="' . $directory . '/deconnexion">Se deconnecter</a>' : '') . '</li>
+            <li><a href="' . $directory . 'prestations/all/asc">Prestations</a></li>
+            <li><a href="' . $directory . 'categories">Catégories</a></li>
+            <li><a href="' . $directory . 'administration">Administration</a>' . (isset($_SESSION['admin']) ? '&nbsp;|&nbsp;<a href="' . $directory . '/deconnexion">Se deconnecter</a>' : '') . '</li>
           </ul>
         </div>
       </div>
