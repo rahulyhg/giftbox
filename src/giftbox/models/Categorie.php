@@ -35,7 +35,7 @@ class Categorie extends \Illuminate\Database\Eloquent\Model
     }
 
     public function prestations(){
-        return $this->hasMany('\giftbox\models\Prestation', 'cat_id');
+        return $this->hasMany('\giftbox\models\Prestation', 'cat_id')->get();
     }
 
 

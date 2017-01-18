@@ -38,6 +38,8 @@ class PrestaView
 		$contenu .= '<option value="' . $this->app->urlFor('prestations', ['order' => 'desc']) . '" ' . (($order == 'desc') ? 'selected' : '') . '>Prix décroissant</option>';
 		$contenu .= '</select>';
 		$contenu .= '</div>';
+
+
 		foreach ($this->data[0] as $d){
 			$notes = Note::where('prestationId', '=', $d->id)->get(array('note'));
 			$notesTotal = 0;
@@ -75,6 +77,7 @@ class PrestaView
 			$contenu .= '</div>';
 			$contenu .= '</div>';
 		}
+
 		return $contenu;
 	}
 

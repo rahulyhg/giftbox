@@ -33,9 +33,9 @@ class CatView
 	private function categoriePrest(){
 		$categorie = $this->data[0];
 		if ($this->order == "desc") {
-			$prestations = new PrestaView($this->app, $categorie->prestations()->get()->sortByDesc('prix'));
+			$prestations = new PrestaView($this->app, [$categorie->prestations()->sortByDesc('prix'), $this->order]);
 		} else {
-			$prestations = new PrestaView($this->app, $categorie->prestations()->get()->sortBy('prix'));
+			$prestations = new PrestaView($this->app, [$categorie->prestations()->sortBy('prix'), $this->order]);
 		}
 		$contenu = $prestations->render(1);
 		return $contenu;
