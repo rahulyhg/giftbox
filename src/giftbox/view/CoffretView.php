@@ -32,7 +32,9 @@ class CoffretView
                 $prestations = $coffret->prestationsCoffret();
 
 
-                $contenu .= "<h1>Contenu du coffret</h1>";
+                $contenu = '<div class="page-header">';
+                $contenu .= '<h1>Contenu du coffret</h1>';
+                $contenu .= '</div>';
                 $contenu .="<table class='table table-bordered table-striped'>";
                 $contenu .="<thead>";
                 $contenu .="<tr>";
