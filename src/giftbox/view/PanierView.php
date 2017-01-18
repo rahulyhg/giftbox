@@ -268,7 +268,7 @@ class PanierView
 			$contenu .= $this->render('recapitulatif');
 			$_SESSION['coffret'] = $data;
             if (strcmp($data['paiement'], 'cagnotte') == 0) {
-                $contenu .= '<p><a href="' . $this->app->urlFor('cagnotte.creation') . '">Sauvegarder le coffret</a></p>';
+                $contenu .= '<p><a href="' . $this->app->urlFor('cagnotte.creation') . '" class="btn btn-primary">Sauvegarder le coffret</a></p>';
             } else {
                 $contenu .= '<p><a href="' . $this->app->urlFor('paiement.form') . '" class="btn btn-primary">Sauvegarder le coffret</a></p>';
             }

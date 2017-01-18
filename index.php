@@ -34,7 +34,12 @@ $app->get('/',function(){
 
 $app->get('/prestations/all/:order', function($order){
 	$app = \Slim\Slim::getInstance();
-	$vue = new \giftbox\view\PrestaView($app, $order);
+	if ($order == "desc"){
+		$liste = \giftbox\models\Prestation::where('visible', '=', 1)->get()->sortByDesc('prix');
+	}else{
+		$liste = \giftbox\models\Prestation::where('visible', '=', 1)->get()->sortBy('prix');
+	}
+	$vue = new \giftbox\view\PrestaView($app, [$liste, $order]);
 	$html = new \giftbox\view\htmlView($vue->render(1));
 	$html->render();
 })->name('prestations');
@@ -97,6 +102,20 @@ $app->post('/panier/validation', function() {
 	$html = new \giftbox\view\htmlView($vue->render('validation'));
 	$html->render();
 })->name('validation');
+
+$app->get('/panier/validation', function() {
+	$app = \Slim\Slim::getInstance();
+	$vue = new \giftbox\view\PanierView($app);
+	$html = new \giftbox\view\htmlView($vue->render('cagnotteCreation'));
+	$html->render();
+})->name('cagnotte.creation');
+
+$app->get('/cagnotte/deconnexion', function() {
+	$app = \Slim\Slim::getInstance();
+	$vue = new \giftbox\view\CagnotteView($app);
+	$html = new \giftbox\view\htmlView($vue->render('deconnexion'));
+	$html->render();
+})->name('cagnotte.deconnexion');
 
 $app->get('/paiement', function() {
 	$app = \Slim\Slim::getInstance();
