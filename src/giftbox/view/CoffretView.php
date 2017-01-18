@@ -56,7 +56,7 @@ class CoffretView
                 }
                 $contenu.="</tbody>";
                 $contenu.="</table>";
-                $contenu.= "<h2>Statut du coffret : " . $coffret->statut . "</h2>";
+                $contenu.= "<h2>Statut du coffret : " . $coffret->destinataire . " - " . $coffret->statut . "</h2>";
                 $contenu.= '<p><a class="btn btn-success btn-lg" href="'.$this->app->urlFor('coffret_disconnect').'">deconnexion</a></p>';
 
             }else{
@@ -128,6 +128,15 @@ class CoffretView
                 $contenu .= '<td class="vert-align text-center lead">' . $d->descr . '</td>';
                 $contenu .= '</tr>';
             }
+            if ($this->data[0]->destinataire != 'récupéré') {
+                $contenu .= '<tfoot>';
+                $contenu .= '<tr>';
+                $contenu .= '<td colspan="3">';
+                $contenu .= '<a class="btn btn-primary" href="' . $this->app->urlFor('coffret.recuperer', ['id' => $this->data[0]->id]) . '">Récupérer le coffret</a>';
+                $contenu .= '</td>';
+                $contenu .= '</tr>';
+                $contenu .= '</tfoot>';
+            }
             $contenu .= '</table>';
             $contenu .= '</div>';
             $contenu .= '<div class="row">';
@@ -143,7 +152,9 @@ class CoffretView
         return $contenu;
     }
 
-    public function ajouter(){
+
+
+    private function ajouter(){
         $prestation = $this->data[0];
         $urlGestion = $this->data[1];
         $coffret = Coffret::where('urlGestion', '=', $urlGestion)->first();
@@ -170,7 +181,7 @@ class CoffretView
 
         $this->app->redirect($this->app->urlFor('coffret_ges', ['url' => $urlGestion]));
     }
-    public function supprimer(){
+    private function supprimer(){
         $prestation = $this->data[0];
         $urlGestion = $this->data[1];
         $coffret = Coffret::where('urlGestion', '=', $urlGestion)->first();
@@ -197,6 +208,20 @@ class CoffretView
         $this->app->redirect($this->app->urlFor('coffret_ges', ['url' => $urlGestion]));
     }
 
+    private function recuperer() {
+        $coffret = Coffret::where('id', '=', $this->data)->first();
+
+        if (!is_null($coffret)) {
+            $coffret->update(array('destinataire' => 'récupéré'));
+            $this->app->flash('success', 'Vous venez de récupérer votre coffret.');
+            $this->app->redirect($this->app->urlFor('coffret', ['url' => $coffret->url]));
+        } else {
+            $this->app->flash('danger', 'Le coffret n\'existe pas !');
+            $this->app->redirect($this->app->urlFor('index'));
+        }
+        return null;
+    }
+
     public function render($aff){
         switch ($aff){
             case 'gestion_coffret':
@@ -207,8 +232,8 @@ class CoffretView
                 $content = $this->afficherCoffret();
                 return $content;
                 break;
-            case 'ouverture':
-                $content = $this->ouverture();
+            case 'recuperer':
+                $content = $this->recuperer();
                 return $content;
                 break;
             case "connect":

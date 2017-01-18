@@ -259,6 +259,7 @@ class PanierView
 			$data['url'] = uniqid();
 			$data['urlGestion'] = uniqid();
 			$data['statut'] = 'payé';
+            $data['destinataire'] = '';
             $data['montant'] = 0;
 
 			foreach ($_SESSION['panier']['article'] as $article => $a) {
@@ -305,10 +306,10 @@ class PanierView
             $formulaire = '<form id="paiementForm" action="' . $this->app->urlFor('paiement.validation') . '" method="post">';
 
             $formulaire .= '<div class="form-group">';
-            $formulaire .= '<label for="code">Code (max : 12) : *</label>';
+            $formulaire .= '<label for="code">Code (max : 16) : *</label>';
             $formulaire .= '<div class="input-group">';
             $formulaire .= '<div class="input-group-addon"><span class="glyphicon glyphicon-credit-card" aria-hidden="true"></span></div>';
-            $formulaire .= '<input type="text" class="form-control" name="code" id="code" placeholder="Code" maxlength="12" required>';
+            $formulaire .= '<input type="text" class="form-control" name="code" id="code" placeholder="Code" maxlength="16" required>';
             $formulaire .= '</div>';
             $formulaire .= '</div>';
 
@@ -393,6 +394,7 @@ class PanierView
             if (strcmp($paiement, 'cagnotte') == 0) {
                 $_SESSION['coffret']['url'] = '';
                 $_SESSION['coffret']['statut'] = 'impayé';
+                $_SESSION['coffret']['destinataire'] = '';
             }
         }
         $coffret = Coffret::create($_SESSION['coffret']);

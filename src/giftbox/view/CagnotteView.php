@@ -38,10 +38,10 @@ class CagnotteView
 			$contenu .= '</div>';
 
 			$contenu .= '<div class="form-group">';
-			$contenu .= '<label for="code">Code (max : 12) : *</label>';
+			$contenu .= '<label for="code">Code (max : 16) : *</label>';
 			$contenu .= '<div class="input-group">';
 			$contenu .= '<div class="input-group-addon"><span class="glyphicon glyphicon-credit-card" aria-hidden="true"></span></div>';
-			$contenu .= '<input type="text" class="form-control" name="code" id="code" placeholder="Code" maxlength="12" required>';
+			$contenu .= '<input type="text" class="form-control" name="code" id="code" placeholder="Code" maxlength="16" required>';
 			$contenu .= '</div>';
 			$contenu .= '</div>';
 

@@ -147,6 +147,13 @@ $app->get('/coffret/:url', function($url){
 	$html->render();
 })->name('coffret');
 
+$app->get('/coffret/recuperation/:id', function($id){
+	$app = \Slim\Slim::getInstance();
+	$vue = new \giftbox\view\CoffretView($app, $id);
+	$html = new giftbox\view\htmlView($vue->render('recuperer'));
+	$html->render();
+})->name('coffret.recuperer');
+
 $app->get('/coffret/disconnect/true', function(){
 	$app = \Slim\Slim::getInstance();
 	$vue = new \giftbox\view\CoffretView($app);
