@@ -34,12 +34,7 @@ $app->get('/',function(){
 
 $app->get('/prestations/all/:order', function($order){
 	$app = \Slim\Slim::getInstance();
-	if ($order == "desc"){
-		$liste = \giftbox\models\Prestation::where('visible', '=', 1)->get()->sortByDesc('prix');
-	}else{
-		$liste = \giftbox\models\Prestation::where('visible', '=', 1)->get()->sortBy('prix');
-	}
-	$vue = new \giftbox\view\PrestaView($app, [$liste, $order]);
+	$vue = new \giftbox\view\PrestaView($app, $order);
 	$html = new \giftbox\view\htmlView($vue->render(1));
 	$html->render();
 })->name('prestations');
