@@ -101,7 +101,6 @@ class PrestaView
 		$contenu .= '<img src="' . $uri . '/web/img/' . $this->data[0]->img . '" alt="' . $this->data[0]->nom . '">';
 		$contenu .= '</div>';
 		$contenu .= '<p>' . $this->data[0]->descr . '</p>';
-		$contenu .= '<p><u>Prix</u> : ' . $this->data[0]->prix . ' &euro;</p>';
 		$contenu .= '<p><u>Note</u> : <span class="label label-warning">' . $moyenne . '</span></p>';
 		$contenu .= '<p><a href="' . $this->app->urlFor('ajouter', ['id' => $this->data[0]->id]) . '" title="Ajouter au panier" class="btn btn-primary" role="button"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> ' . $this->data[0]->prix . ' &euro;</a></p>';
 		$contenu .= '<p><div class="notation">';

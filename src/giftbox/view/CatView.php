@@ -43,14 +43,13 @@ class CatView
 
 	public function render($aff){
 		switch ($aff){
-			case 1:
-				$content = $this->listeCategories();
-				break;
 			case 2:
 				$content = $this->categoriePrest();
 				break;
+				
+			case 1:
 			default:
-				$content = "contenu inexistant";
+				$content = $this->listeCategories();
 				break;
 		}
 
