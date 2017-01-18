@@ -99,10 +99,10 @@ class PanierView
 				}
 			}
             $this->app->flash('success', 'Prestation ajoutée du panier');
-            $this->app->response->redirect($this->app->urlFor('panier'), 200);
+            $this->app->redirect($this->app->urlFor('panier'));
 		} else {
             $this->app->flash('danger', 'Impossible de trouver la prestation');
-            $this->app->response->redirect($this->app->urlFor('panier'), 200);
+            $this->app->redirect($this->app->urlFor('panier'));
 		}
 		return null;
 	}
@@ -119,14 +119,14 @@ class PanierView
                     $_SESSION['panier']['article'][$prestation->nom]['prix'] = ($_SESSION['panier']['article'][$prestation->nom]['prix'] - $prestation->prix);
                 }
                 $this->app->flash('success', 'Prestation supprimée du panier');
-                $this->app->response->redirect($this->app->urlFor('panier'), 200);
+                $this->app->redirect($this->app->urlFor('panier'));
             } else {
                 $this->app->flash('success', 'Whoops ! Des erreurs ont été rencontrées');
-                $this->app->response->redirect($this->app->urlFor('panier'), 200);
+                $this->app->redirect($this->app->urlFor('panier'));
             }
         } else {
             $this->app->flash('info', 'Impossible de supprimer le prestation du panier.');
-            $this->app->response->redirect($this->app->urlFor('panier'), 200);
+            $this->app->redirect($this->app->urlFor('panier'));
         }
 		return null;
 	}
@@ -200,11 +200,11 @@ class PanierView
                 return $formulaire;
             } else {
                 $this->app->flash('info', 'Il vous faut au moins une prestation de deux catégories différentes.');
-                $this->app->response->redirect($this->app->urlFor('panier'), 200);
+                $this->app->redirect($this->app->urlFor('panier'));
             }
         } else {
             $this->app->flash('info', 'Votre panier est vide !');
-            $this->app->response->redirect($this->app->urlFor('panier'), 200);
+            $this->app->redirect($this->app->urlFor('panier'));
         }
 	}
 
@@ -238,7 +238,7 @@ class PanierView
             }
         } else {
             $this->app->flash('danger', 'Erreur dans le formulaire');
-            $this->app->response->redirect($this->app->urlFor('informations'), 200);
+            $this->app->redirect($this->app->urlFor('informations'));
         }
 
 		if (!empty($errors)) {
@@ -249,7 +249,7 @@ class PanierView
 			}
             $errorsMessage .= '</ul>';
             $this->app->flash('danger', $errorsMessage);
-            $this->app->response->redirect($this->app->urlFor('informations'), 200);
+            $this->app->redirect($this->app->urlFor('informations'));
 		} else {
             if (!empty($password)) {
                 $data['password'] = password_hash($password, PASSWORD_DEFAULT, ['cost' => 10]);
@@ -294,9 +294,9 @@ class PanierView
                 $gestion = '<p>URL de gestion de la cagnotte : http://'. $_SERVER['HTTP_HOST'] . $this->app->urlFor('cagnotte.gestion', ['url' => $cagnotte['urlGestion']]) . '</p>';
             }
             $this->app->flash('success', '<p>Coffret sauvegardé avec succès</p><p>' . $urlCoffret . '</p>' . $gestion);
-            $this->app->response->redirect($this->app->urlFor('index'), 200);
+            $this->app->redirect($this->app->urlFor('index'));
         } else {
-            $this->app->response->redirect($this->app->urlFor('index'), 200);
+            $this->app->redirect($this->app->urlFor('index'));
         }
     }
 
@@ -333,7 +333,7 @@ class PanierView
             $formulaire .= '</form>';
             return $formulaire;
         } else {
-            $this->app->response->redirect($this->app->urlFor('index'), 200);
+            $this->app->redirect($this->app->urlFor('index'));
         }
     }
 
@@ -365,7 +365,7 @@ class PanierView
                     }
                     $errorsMessage .= '</ul>';
                     $this->app->flash('danger', $errorsMessage);
-                    $this->app->response->redirect($this->app->urlFor('paiement.form'), 200);
+                    $this->app->redirect($this->app->urlFor('paiement.form'));
                 } else {
                     $coffret_id = $this->creerCoffret();
                     $coffret = Coffret::where('id', '=', $coffret_id)->first();
@@ -375,15 +375,15 @@ class PanierView
                         $gestion = '<p>URL Coffret gestion : http://'. $_SERVER['HTTP_HOST'] . $this->app->urlFor('coffret_ges', ['url' => $coffret->urlGestion]) . '</p>';
                     }
                     $this->app->flash('success', '<p>Coffret sauvegardé avec succès</p><p>' . $urlCoffret . '</p>' . $gestion);
-                    $this->app->response->redirect($this->app->urlFor('index'), 200);
+                    $this->app->redirect($this->app->urlFor('index'));
                     unset($_SESSION['coffret']);
                 }
             } else {
                 $this->app->flash('danger', 'Erreur dans le formulaire');
-                $this->app->response->redirect($this->app->urlFor('paiement.form'), 200);
+                $this->app->redirect($this->app->urlFor('paiement.form'));
             }
         } else {
-            $this->app->response->redirect($this->app->urlFor('index'), 200);
+            $this->app->redirect($this->app->urlFor('index'));
         }
 	    return null;
     }

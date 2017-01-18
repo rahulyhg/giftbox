@@ -65,7 +65,7 @@ class CagnotteView
 			$contenu .= '</form>';
 		} else {
 			$this->app->flash('danger', 'Impossible de trouver la cagnotte !');
-			$this->app->response->redirect($this->app->urlFor('index'), 200);
+			$this->app->redirect($this->app->urlFor('index'));
 		}
 		return $contenu;
 	}
@@ -96,7 +96,7 @@ class CagnotteView
 				}
 				$errorsMessage .= '</ul>';
 				$this->app->flash('danger', $errorsMessage);
-				$this->app->response->redirect($this->app->urlFor('cagnotte.participationForm', ['url' => $this->data]), 200);
+				$this->app->redirect($this->app->urlFor('cagnotte.participationForm', ['url' => $this->data]));
 			} else {
 				$cagnotte = Cagnotte::where('urlContribution', '=', $this->data)->first();
 				if (!is_null($cagnotte)) {
@@ -105,18 +105,18 @@ class CagnotteView
 						$total = ($cagnotte->montant + $montant);
 						$cagnotte->update(array('montant' => $total));
 						$this->app->flash('success', 'Merci d\'avoir participé à la cagnotte !');
-						$this->app->response->redirect($this->app->urlFor('cagnotte.participationForm', ['url' => $this->data]), 200);
+						$this->app->redirect($this->app->urlFor('cagnotte.participationForm', ['url' => $this->data]));
 					} else {
 						$this->app->flash('info', 'Vous ne pouvez par participer à cette cagnotte car elle est cloturée !');
-						$this->app->response->redirect($this->app->urlFor('cagnotte.participationForm', ['url' => $this->data]), 200);
+						$this->app->redirect($this->app->urlFor('cagnotte.participationForm', ['url' => $this->data]));
 					}
 				} else {
 					$this->app->flash('danger', 'Impossible de participer à cette cagnotte');
-						$this->app->response->redirect($this->app->urlFor('cagnotte.participationForm', ['url' => $this->data]), 200);
+						$this->app->redirect($this->app->urlFor('cagnotte.participationForm', ['url' => $this->data]));
 				}
 			}
 		} else {
-			$this->app->response->redirect($this->app->urlFor('cagnotte.participationForm', ['url' => $this->data]), 200);
+			$this->app->redirect($this->app->urlFor('cagnotte.participationForm', ['url' => $this->data]));
 		}
 		return null;
 	}
@@ -130,22 +130,22 @@ class CagnotteView
 					if ($cagnotte->cloture == 0) {
 						$cagnotte->update(array('cloture' => 1));
 						$this->app->flash('success', 'Cagnotte cloturée avec succès !');
-						$this->app->response->redirect($this->app->urlFor('cagnotte.gestion', ['url' => $this->data]), 200);
+						$this->app->redirect($this->app->urlFor('cagnotte.gestion', ['url' => $this->data]));
 						$coffret->update(array('url' => uniqid(), 'statut' => 'payé'));
 					} else {
 						$this->app->flash('danger', 'La cagnotte est déjà cloturée !');
-						$this->app->response->redirect($this->app->urlFor('cagnotte.gestion', ['url' => $this->data]), 200);
+						$this->app->redirect($this->app->urlFor('cagnotte.gestion', ['url' => $this->data]));
 					}
 				} else {
 					$this->app->flash('info', 'Le montant de la cagnotte (' . $cagnotte->montant . '&euro;) est inférieur au montant du coffret (' . $coffret->montant . '&euro;) !');
-						$this->app->response->redirect($this->app->urlFor('cagnotte.gestion', ['url' => $this->data]), 200);
+						$this->app->redirect($this->app->urlFor('cagnotte.gestion', ['url' => $this->data]));
 				}
 			} else {
 				$this->app->flash('danger', 'Impossible de trouver la cagnotte !');
-				$this->app->response->redirect($this->app->urlFor('cagnotte.gestion', ['url' => $this->data]), 200);
+				$this->app->redirect($this->app->urlFor('cagnotte.gestion', ['url' => $this->data]));
 			}
 		} else {
-			$this->app->response->redirect($this->app->urlFor('cagnotte.connexionForm', ['url' => $this->data]), 200);
+			$this->app->redirect($this->app->urlFor('cagnotte.connexionForm', ['url' => $this->data]));
 		}
 		return null;
 	}
@@ -177,21 +177,21 @@ class CagnotteView
 					$password = filter_var($post['password'], FILTER_SANITIZE_STRING);
 					if(password_verify($password, $coffret->password)){
 						$_SESSION['cagnotte_edit'] = "allowed";
-						$this->app->response->redirect($this->app->urlFor('cagnotte.gestion', ['url' => $this->data]), 200);
+						$this->app->redirect($this->app->urlFor('cagnotte.gestion', ['url' => $this->data]));
 					} else {
 						$this->app->flash('danger', 'Mot de passe incorrect');
-						$this->app->response->redirect($this->app->urlFor('cagnotte.connexionForm', ['url' => $this->data]), 200);
+						$this->app->redirect($this->app->urlFor('cagnotte.connexionForm', ['url' => $this->data]));
 					}
 				} else {
 					$this->app->flash('danger', 'Impossible de trouver la cagnote');
-					$this->app->response->redirect($this->app->urlFor('cagnotte.connexionForm', ['url' => $this->data]), 200);
+					$this->app->redirect($this->app->urlFor('cagnotte.connexionForm', ['url' => $this->data]));
 				}
 			} else {
 				$this->app->flash('danger', 'Impossible de vous connecter');
-				$this->app->response->redirect($this->app->urlFor('cagnotte.connexionForm', ['url' => $this->data]), 200);
+				$this->app->redirect($this->app->urlFor('cagnotte.connexionForm', ['url' => $this->data]));
 			}
 		} else {
-			$this->app->response->redirect($this->app->urlFor('cagnotte.gestion', ['url' => $this->data]), 200);
+			$this->app->redirect($this->app->urlFor('cagnotte.gestion', ['url' => $this->data]));
 		}
 		return null;
 	}
@@ -200,9 +200,9 @@ class CagnotteView
 		if (isset($_SESSION['cagnotte_edit'])) {
 			unset($_SESSION['cagnotte_edit']);
 			$this->app->flash('success', 'Vous avez été déconnecté');
-			$this->app->response->redirect($this->app->urlFor('cagnotte.connexionForm'), 200);
+			$this->app->redirect($this->app->urlFor('cagnotte.connexionForm'));
 		} else {
-			$this->app->response->redirect($this->app->urlFor('cagnotte.connexionForm'), 200);
+			$this->app->redirect($this->app->urlFor('cagnotte.connexionForm'));
 		}
 		return null;
 	}
@@ -210,7 +210,7 @@ class CagnotteView
 	private function gestion() {
 		$content = '';
 		if (!isset($_SESSION['cagnotte_edit'])) {
-			$this->app->response->redirect($this->app->urlFor('cagnotte.connexionForm', ['url' => $this->data]), 200);
+			$this->app->redirect($this->app->urlFor('cagnotte.connexionForm', ['url' => $this->data]));
 		} else {
 			$cagnotte = Cagnotte::where('urlGestion', '=', $this->data)->first();
 			$coffret = Coffret::where('id', '=', $cagnotte->coffret_id)->first();

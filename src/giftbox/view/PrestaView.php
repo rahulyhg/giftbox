@@ -133,7 +133,7 @@ class PrestaView
 		$prestation->save();
 
 		$this->app->flash('success', 'Merci d\'avoir not&eacute; cette prestation.');
-		$this->app->response->redirect($this->app->urlFor('index'), 200);
+		$this->app->redirect($this->app->urlFor('index'));
 		return null;
 	}
 

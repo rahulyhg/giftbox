@@ -26,6 +26,7 @@ echo '
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="description" content="">
 	<meta name="author" content="BOURRELY Thomas, WILMOUTH Steven">
+	<link rel="icon" href="' . $directory . 'web/img/icon.ico" />
 	<title>Giftbox</title>
 	<link href="' . $directory . 'web/css/bootstrap.min.css" rel="stylesheet">
 	<link href="' . $directory . 'web/css/ie10-viewport-bug-workaround.css" rel="stylesheet">

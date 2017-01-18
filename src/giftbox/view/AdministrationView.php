@@ -20,7 +20,7 @@ class AdministrationView {
 	private function index() {
 		$contenu = '';
 		if (isset($_SESSION['admin'])) {
-			$this->app->response->redirect($this->app->urlFor('administration.prestations'), 200);
+			$this->app->redirect($this->app->urlFor('administration.prestations'));
 		} else {
 			$contenu = '<div class="page-header">';
 			$contenu .= '<h1>Administration</h1>';
@@ -65,7 +65,7 @@ class AdministrationView {
 			}
 		} else {
 			$this->app->flash('danger', 'Erreur dans le formulaire');
-			$this->app->response->redirect($this->app->urlFor('administration'), 200);
+			$this->app->redirect($this->app->urlFor('administration'));
 		}
 		
 		if (!empty($errors)) {
@@ -76,21 +76,21 @@ class AdministrationView {
 			}
 			$errorsMessage .= '</ul>';
 			$this->app->flash('danger', $errorsMessage);
-			$this->app->response->redirect($this->app->urlFor('informations'), 200);
+			$this->app->redirect($this->app->urlFor('informations'));
 		} else {
 			$administrateur = Administrateur::where('email', '=', $data['email'])->first();
 			if (!is_null($administrateur)) {
 				if (password_verify($data['password'], $administrateur->password)) {
 					$_SESSION['admin'] = $administrateur->id;
 					$this->app->flash('success', 'Vous êtes maintenant connecté');
-					$this->app->response->redirect($this->app->urlFor('administration.prestations'), 200);
+					$this->app->redirect($this->app->urlFor('administration.prestations'));
 				} else {
 					$this->app->flash('danger', 'Mot de passe incorrect');
-					$this->app->response->redirect($this->app->urlFor('administration'), 200);
+					$this->app->redirect($this->app->urlFor('administration'));
 				}
 			} else {
 				$this->app->flash('danger', 'Impossible de trouver l\'utilisateur');
-				$this->app->response->redirect($this->app->urlFor('administration'), 200);
+				$this->app->redirect($this->app->urlFor('administration'));
 			}
 		}
 		return null;
@@ -100,7 +100,7 @@ class AdministrationView {
 		if (isset($_SESSION['admin'])) {
 			unset($_SESSION['admin']);
 			$this->app->flash('success', 'Vous êtes maintenant déconnecté');
-			$this->app->response->redirect($this->app->urlFor('index'), 200);
+			$this->app->redirect($this->app->urlFor('index'));
 		}
 	}
 
@@ -160,7 +160,7 @@ class AdministrationView {
 			$contenu .= '</table>';
 		} else {
 			$this->app->flash('danger', 'Vous n\'avez pas l\'autorisation pour faire cette action !');
-			$this->app->response->redirect($this->app->urlFor('index'), 200);
+			$this->app->redirect($this->app->urlFor('index'));
 		}
 		return $contenu;
 	}
@@ -171,14 +171,14 @@ class AdministrationView {
 			if (!is_null($prestation)) {
 				Prestation::destroy($prestation->id);
 				$this->app->flash('success', 'Prestation supprimée avec succès');
-				$this->app->response->redirect($this->app->urlFor('administration.prestations'), 200);
+				$this->app->redirect($this->app->urlFor('administration.prestations'));
 			} else {
 				$this->app->flash('info', 'Prestation introuvable');
-				$this->app->response->redirect($this->app->urlFor('administration.prestations'), 200);
+				$this->app->redirect($this->app->urlFor('administration.prestations'));
 			}
 		} else {
 			$this->app->flash('danger', 'Vous n\'avez pas l\'autorisation pour faire cette action !');
-			$this->app->response->redirect($this->app->urlFor('index'), 200);
+			$this->app->redirect($this->app->urlFor('index'));
 		}
 		return null;
 	}
@@ -190,14 +190,14 @@ class AdministrationView {
 				$prestation->visible = 0;
 				$prestation->save();
 				$this->app->flash('success', 'Prestation cachée avec succès');
-				$this->app->response->redirect($this->app->urlFor('administration.prestations'), 200);
+				$this->app->redirect($this->app->urlFor('administration.prestations'));
 			} else {
 				$this->app->flash('info', 'Prestation introuvable');
-				$this->app->response->redirect($this->app->urlFor('administration.prestations'), 200);
+				$this->app->redirect($this->app->urlFor('administration.prestations'));
 			}
 		} else {
 			$this->app->flash('danger', 'Vous n\'avez pas l\'autorisation pour faire cette action !');
-			$this->app->response->redirect($this->app->urlFor('index'), 200);
+			$this->app->redirect($this->app->urlFor('index'));
 		}
 		return null;
 	}
@@ -209,14 +209,14 @@ class AdministrationView {
 				$prestation->visible = 1;
 				$prestation->save();
 				$this->app->flash('success', 'Prestation affichée avec succès');
-				$this->app->response->redirect($this->app->urlFor('administration.prestations'), 200);
+				$this->app->redirect($this->app->urlFor('administration.prestations'));
 			} else {
 				$this->app->flash('info', 'Prestation introuvable');
-				$this->app->response->redirect($this->app->urlFor('administration.prestations'), 200);
+				$this->app->redirect($this->app->urlFor('administration.prestations'));
 			}
 		} else {
 			$this->app->flash('danger', 'Vous n\'avez pas l\'autorisation pour faire cette action !');
-			$this->app->response->redirect($this->app->urlFor('index'), 200);
+			$this->app->redirect($this->app->urlFor('index'));
 		}
 		return null;
 	}
@@ -279,7 +279,7 @@ class AdministrationView {
 			$contenu .= '</form>';
 		} else {
 			$this->app->flash('danger', 'Vous n\'avez pas l\'autorisation pour faire cette action !');
-			$this->app->response->redirect($this->app->urlFor('index'), 200);
+			$this->app->redirect($this->app->urlFor('index'));
 		}
 		return $contenu;
 	}
@@ -304,7 +304,7 @@ class AdministrationView {
 				}
 			} else {
 				$this->app->flash('danger', 'Erreur dans le formulaire');
-				$this->app->response->redirect($this->app->urlFor('administration'), 200);
+				$this->app->redirect($this->app->urlFor('administration'));
 			}
 			
 			if (!empty($errors)) {
@@ -315,7 +315,7 @@ class AdministrationView {
 				}
 				$errorsMessage .= '</ul>';
 				$this->app->flash('danger', $errorsMessage);
-				$this->app->response->redirect($this->app->urlFor('informations'), 200);
+				$this->app->redirect($this->app->urlFor('informations'));
 			} else {
 				$data['votes'] = 0;
 				if (!isset($data['visible'])) {
@@ -332,11 +332,11 @@ class AdministrationView {
 				}
 				Prestation::create($data);
 				$this->app->flash('success', 'Prestation ajoutée avec succès.');
-				$this->app->response->redirect($this->app->urlFor('administration.prestations'), 200);
+				$this->app->redirect($this->app->urlFor('administration.prestations'));
 			}
 		} else {
-			$this->app->flash('danger', 'Vous n\'avez pas l\'autorisation pour faire cette action !');
-			$this->app->response->redirect($this->app->urlFor('index'), 200);
+			$this->app->flash('danger', 'Vous n\'avez pas l\'autorisation de faire cette action !');
+			$this->app->redirect($this->app->urlFor('index'));
 		}
 		return null;
 	}

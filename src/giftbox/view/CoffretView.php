@@ -71,7 +71,7 @@ class CoffretView
             return $contenu;
         }else{
             $this->app->flash('danger','Url incorrect, veuillez utiliser l\'url de gestion fournis lors de la commande !');
-            $this->app->response->redirect($this->app->urlFor('index'), 200);
+            $this->app->redirect($this->app->urlFor('index'));
         }
 
     }
@@ -90,7 +90,7 @@ class CoffretView
             $this->app->flash('danger', 'Veuillez entrer un mot de passe valide !');
         }
 
-        $this->app->response->redirect($this->app->urlFor('coffret_ges', ['url'=>$this->data[0]->urlGestion]), 200);
+        $this->app->redirect($this->app->urlFor('coffret_ges', ['url'=>$this->data[0]->urlGestion]));
 
         return null;
     }
@@ -99,10 +99,10 @@ class CoffretView
         if(isset($_SESSION['coffret_edit'])){
             unset($_SESSION['coffret_edit']);
             $this->app->flash('success', 'Déconnexion réussie !');
-            $this->app->response->redirect($this->app->urlFor('index'),200);
+            $this->app->redirect($this->app->urlFor('index'));
         }else{
             $this->app->flashNow('danger', 'Une erreur s\'est produite !');
-            $this->app->response->redirect($this->app->urlFor('index'),200);
+            $this->app->redirect($this->app->urlFor('index'));
         }
     }
 
@@ -160,7 +160,7 @@ class CoffretView
 
         $this->app->flash('success', 'Ajout réussi !');
 
-        $this->app->response->redirect($this->app->urlFor('coffret_ges', ['url' => $urlGestion]),200);
+        $this->app->redirect($this->app->urlFor('coffret_ges', ['url' => $urlGestion]));
     }
     public function supprimer(){
         $prestation = $this->data[0];
@@ -186,7 +186,7 @@ class CoffretView
             $coffret->save();
         }
         $this->app->flash('success', 'Suppression réussie !');
-        $this->app->response->redirect($this->app->urlFor('coffret_ges', ['url' => $urlGestion]),200);
+        $this->app->redirect($this->app->urlFor('coffret_ges', ['url' => $urlGestion]));
     }
 
     public function render($aff){
