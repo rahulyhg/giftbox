@@ -33,7 +33,7 @@ class CoffretView
 
 
                 $contenu .= "<h1>Contenu du coffret</h1>";
-                $contenu .="<table class='table table-bordered table-stripped'>";
+                $contenu .="<table class='table table-bordered table-striped'>";
                 $contenu .="<thead>";
                 $contenu .="<tr>";
                 $contenu .="<th>Nom</th>";
