@@ -116,22 +116,30 @@ class CoffretView
 
         $contenu .= '<div class="row">';
         $contenu .= '<table class="table">';
-        foreach ($this->data[0]->prestationsCoffret() as $contenuCoffret){
-            $d = $contenuCoffret->prestation();
-            $contenu .= '<tr>';
-            $contenu .= '<td class="h4 vert-align text-center"><u>Prestation</u> : ' . $d->nom . '</td>';
-            $contenu .= '<td><img class="img-responsive" width="120em" src="' . $uri . '/web/img/' . $d->img . '"></td>';
-            $contenu .= '<td class="vert-align text-center lead">' . $d->descr . '</td>';
-            $contenu .= '</tr>';
-        }
-        $contenu .= '</table>';
-        $contenu .= '</div>';
-        $contenu .= '<div class="row">';
-        $contenu .= '<div class="col-md-12"><div class="h4 text-center">Message de <u class="lead">'.$this->data[0]->prenom.' '.$this->data[0]->nom.'</u> : </div><div class="text-center lead">'.$this->data[0]->message.'</div>';
-        $contenu .= '</div>';
-        $contenu .= '</div>';
+        if ($this->data[0]->statut == 'payé') {
+            if (empty($this->data[0]->destinataire)) {
+                $this->data[0]->update(array('destinataire' => 'ouvert'));
+            }
+            foreach ($this->data[0]->prestationsCoffret() as $contenuCoffret){
+                $d = $contenuCoffret->prestation();
+                $contenu .= '<tr>';
+                $contenu .= '<td class="h4 vert-align text-center"><u>Prestation</u> : ' . $d->nom . '</td>';
+                $contenu .= '<td><img class="img-responsive" width="120em" src="' . $uri . '/web/img/' . $d->img . '"></td>';
+                $contenu .= '<td class="vert-align text-center lead">' . $d->descr . '</td>';
+                $contenu .= '</tr>';
+            }
+            $contenu .= '</table>';
+            $contenu .= '</div>';
+            $contenu .= '<div class="row">';
+            $contenu .= '<div class="col-md-12"><div class="h4 text-center">Message de <u class="lead">'.$this->data[0]->prenom.' '.$this->data[0]->nom.'</u> : </div><div class="text-center lead">'.$this->data[0]->message.'</div>';
+            $contenu .= '</div>';
+            $contenu .= '</div>';
 
-        $contenu .= '</div>';
+            $contenu .= '</div>';   
+        } else {
+            $this->app->flash('info', 'Impossible de voir le contenu du coffret car il n\'est pas encore payé !');
+            $this->app->redirect($this->app->urlFor('index'));
+        }
         return $contenu;
     }
 
@@ -197,6 +205,10 @@ class CoffretView
                 break;
             case 'coffret':
                 $content = $this->afficherCoffret();
+                return $content;
+                break;
+            case 'ouverture':
+                $content = $this->ouverture();
                 return $content;
                 break;
             case "connect":
