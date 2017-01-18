@@ -32,10 +32,14 @@ echo '
 	<link href="' . $directory . 'web/css/offcanvas.css" rel="stylesheet">
 	<script src="' . $directory . 'web/js/ie-emulation-modes-warning.js"></script>
 	<link href="' . $directory . 'web/css/style.css" rel="stylesheet">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 	<!--[if lt IE 9]>
 	  <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 	  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 	<![endif]-->
+	<script src="' . $directory . 'web/js/bootstrap.min.js"></script>
+	<script src="' . $directory . 'web/js/ie10-viewport-bug-workaround.js"></script>
+	<script src="' . $directory . 'web/js/offcanvas.js"></script>
   </head>
 
   <body>
@@ -55,14 +59,13 @@ echo '
 			<li' . (($ressourceUri == '/' || empty($ressourceUri)) ? ' class="active"' : '') . '><a href="' . $directory . '">Accueil</a></li>
 			<li' . (strstr($ressourceUri, "prestations", true) ? ' class="active"' : '') . '><a href="' . $directory . 'prestations/all/asc">Prestations</a></li>
 			<li' . (strstr($ressourceUri, "categories", true) ? ' class="active"' : '') . '><a href="' . $directory . 'categories">Catégories</a></li>
-			<li' . (strstr($ressourceUri, "administration", true) ? ' class="active"' : '') . '><a href="' . $directory . 'administration">Administration</a></li>
-			' . (isset($_SESSION['admin']) ? '<li><a href="' . $directory . 'administration/deconnexion">Se deconnecter</a></li>' : '') . '
 		  </ul>
 		  <ul class="nav navbar-nav navbar-right">
-		  	<a href="' . $directory . 'panier" class="btn btn-warning navbar-btn">
-		  		<span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span>
-		  		' . (isset($_SESSION['panier']) ? $_SESSION['panier']['qua'] : 0) . '
-		  	</a>
+			<a href="' . $directory . 'panier" class="btn btn-' . (strstr($ressourceUri, "administration", true) ? 'success' : 'warning') . ' navbar-btn">
+				<span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span>
+				' . (isset($_SESSION['panier']) ? $_SESSION['panier']['qua'] : 0) . '</a>
+			<a href="' . $directory . 'administration" class="btn btn-' . (strstr($ressourceUri, "administration", true) ? 'info' : 'primary') . '"><span class="glyphicon glyphicon-cog"></span> Administration</a>
+			' . (isset($_SESSION['admin']) ? '<a href="' . $directory . 'administration/deconnexion"  class="btn btn-danger">Se deconnecter</a>' : '') . '
 		  </ul>
 		</div>
 	  </div>
@@ -77,10 +80,10 @@ echo '
 			<button type="button" class="btn btn-primary btn-xs" data-toggle="offcanvas">Toggle nav</button>
 		  </p>
 		  <div class="row">
-		  	<div class="col-md-12">
-			  	' . $flashMessage . '
+			<div class="col-md-12">
+				' . $flashMessage . '
 				' . $content . '
-		  	</div>
+			</div>
 		  </div>
 		</div>
 	  </div>
@@ -93,12 +96,6 @@ echo '
 	  </footer>
 
 	</div>
-
-
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-	<script src="' . $directory . 'web/js/bootstrap.min.js"></script>
-	<script src="' . $directory . 'web/js/ie10-viewport-bug-workaround.js"></script>
-	<script src="' . $directory . 'web/js/offcanvas.js"></script>
   </body>
 </html>
 ';
