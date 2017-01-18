@@ -200,9 +200,7 @@ class CagnotteView
 		if (isset($_SESSION['cagnotte_edit'])) {
 			unset($_SESSION['cagnotte_edit']);
 			$this->app->flash('success', 'Vous avez été déconnecté');
-			$this->app->redirect($this->app->urlFor('cagnotte.connexionForm'));
-		} else {
-			$this->app->redirect($this->app->urlFor('cagnotte.connexionForm'));
+			$this->app->redirect($this->app->urlFor('index'));
 		}
 		return null;
 	}
